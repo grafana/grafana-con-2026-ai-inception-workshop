@@ -6,7 +6,11 @@ A live API with real-time data from Barcelona's public bike-sharing system (Bici
 https://cc-workshop-proxy.grafana.fun/bcapi/
 ```
 
-No authentication required.
+All requests require an `Authorization` header:
+
+```
+Authorization: Bearer barcelona2026
+```
 
 ### Endpoints
 
