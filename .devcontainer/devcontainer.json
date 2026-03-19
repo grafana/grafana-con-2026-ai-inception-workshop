@@ -15,5 +15,5 @@
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
-  "postCreateCommand": "corepack enable && corepack prepare yarn@stable --activate"
+  "postCreateCommand": "npm install -g corepack && corepack enable && corepack prepare yarn@stable --activate"
 }
