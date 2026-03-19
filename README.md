@@ -15,6 +15,16 @@
    claude
    ```
 
-## API Documentation
+## Useful Commands
 
-See [api.md](api.md) for the Barcelona Bicing API reference.
+```bash
+npm install           # Install dependencies
+mage build:linux      # Build backend (Go)
+npm run dev          # Start frontend dev server
+npm run server       # Start Docker container with Grafana
+```
+
+## Workshop Resources
+
+- **[api.md](api.md)** - Barcelona Bicing API reference
+- **[PROMPTS.md](PROMPTS.md)** - Complete list of prompts used throughout the workshop
