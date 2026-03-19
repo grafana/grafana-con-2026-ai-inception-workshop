@@ -18,6 +18,10 @@
 ## Useful Commands
 
 ```bash
+# Create a new plugin
+npx @grafana/create-plugin@latest
+
+# Plugin development
 npm install           # Install dependencies
 mage build:linux      # Build backend (Go)
 npm run dev          # Start frontend dev server

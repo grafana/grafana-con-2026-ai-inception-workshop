@@ -108,6 +108,7 @@ while [ -z "$KEY" ] && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; do
 done
 
 KEY_SUFFIX="${KEY: -20}"
+VSCODE_SETTINGS="$HOME/.vscode-remote/data/Machine/settings.json"
 
 if [ "$IS_LOCAL" = true ]; then
  # === LOCAL MODE ===
@@ -191,6 +192,32 @@ else
      }
    }' > ~/.claude.json
 
+ # Write VS Code user settings for the extension
+ mkdir -p "$(dirname "$VSCODE_SETTINGS")"
+ if [ -f "$VSCODE_SETTINGS" ]; then
+   # Merge into existing settings
+   jq --arg base_url "$PROXY_URL" --arg key "$KEY" \
+     '.["claudeCode.environmentVariables"] = [
+       {"name": "ANTHROPIC_AUTH_TOKEN", "value": $key},
+       {"name": "ANTHROPIC_API_KEY", "value": $key},
+       {"name": "ANTHROPIC_BASE_URL", "value": $base_url}
+     ]' \
+     "$VSCODE_SETTINGS" > "${VSCODE_SETTINGS}.tmp" && mv "${VSCODE_SETTINGS}.tmp" "$VSCODE_SETTINGS"
+ else
+   # Create new settings file
+   jq -n \
+     --arg base_url "$PROXY_URL" \
+     --arg key "$KEY" \
+     '{
+       "claudeCode.environmentVariables": [
+         {"name": "ANTHROPIC_AUTH_TOKEN", "value": $key},
+         {"name": "ANTHROPIC_API_KEY", "value": $key},
+         {"name": "ANTHROPIC_BASE_URL", "value": $base_url}
+       ]
+     }' > "$VSCODE_SETTINGS"
+ fi
+
  echo "Done! You can now run: claude"
+ echo "VS Code extension configured at $VSCODE_SETTINGS"
 fi
 
