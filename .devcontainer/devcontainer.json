@@ -1,5 +1,10 @@
 {
   "name": "GrafanaCon 2026 - AI Workshop",
+  "hostRequirements": {
+    "cpus": 8,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   }
