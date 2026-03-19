@@ -22,10 +22,10 @@
 npx @grafana/create-plugin@latest
 
 # Plugin development
-npm install           # Install dependencies
+yarn install          # Install dependencies
 mage build:linux      # Build backend (Go)
-npm run dev          # Start frontend dev server
-npm run server       # Start Docker container with Grafana
+yarn dev             # Start frontend dev server
+yarn server          # Start Docker container with Grafana
 ```
 
 ## Workshop Resources
