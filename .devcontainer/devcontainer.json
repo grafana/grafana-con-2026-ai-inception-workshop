@@ -5,6 +5,13 @@
     "memory": "8gb",
     "storage": "32gb"
   },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go"
+      ]
+    }
+  },
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   }
