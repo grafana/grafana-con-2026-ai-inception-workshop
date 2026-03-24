@@ -26,4 +26,5 @@ yarn dlx @grafana/create-plugin@latest
 "Enter a name for your plugin": “bcapi”
 "Enter your organization name (usually your Grafana Cloud org)": "aiworkshop"
 
+yarn install
 ```
