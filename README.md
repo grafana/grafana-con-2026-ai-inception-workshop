@@ -31,4 +31,5 @@ yarn server          # Start Docker container with Grafana
 ## Workshop Resources
 
 - **[api.md](api.md)** - Barcelona Bicing API reference
+- **[scaffolding](scaffolding.md)** - Scaffolding commands
 - **[PROMPTS.md](PROMPTS.md)** - Complete list of prompts used throughout the workshop
