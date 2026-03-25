@@ -19,7 +19,7 @@ Authorization: Bearer barcelona2026
 Returns static information for all bike stations.
 
 ```bash
-curl -s https://cc-workshop-proxy.grafana.fun/bcapi/station_information
+curl -H "Authorization: Bearer barcelona2026" -s https://cc-workshop-proxy.grafana.fun/bcapi/station_information
 ```
 
 Each station includes:
