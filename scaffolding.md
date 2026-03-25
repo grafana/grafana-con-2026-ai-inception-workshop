@@ -28,3 +28,20 @@ yarn dlx @grafana/create-plugin@latest
 
 yarn install
 ```
+
+## Add e2e tests using playwright or Chrome DevTools MCP
+In your "app" folder run
+
+```
+yarn dlx playwright init-agents --loop=claude
+/agents
+playwright-test-planner - Prompt: Generate a plan for testing of the bike stations list
+
+Once the plan is in place in specs folder
+
+playwright-test-generator - Prompt: ”Generate tests for ###1.”
+
+yarn e2e
+yarn dlx playwright show-report
+(if needed) playwright-test-healer: “Prompt: fix the test X”
+```
