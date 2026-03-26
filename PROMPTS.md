@@ -13,7 +13,7 @@ Help me create a grafana data source for the barcelona Bicing API described in @
 ### Storing Knowledge
 
 ```
-Store the essential information about the created datasource in AGENTS.md file
+Store the essential information about the created datasource in CLAUDE.md file
 ```
 
 ## App Development
@@ -44,25 +44,8 @@ Create a second page in the bicing app that I can access via the navigation menu
 
 ## Advanced Features
 
-### E2E Tests with Playwright
-
-**Generate test plan:**
-```
-Generate a plan for testing of the bike stations list
-```
-
-**Generate tests:**
-```
-Generate tests for ###1.
-```
-
-**Fix tests:**
-```
-fix the test X
-```
-
 ### Using LLM Package
 
 ```
-Add an option in the map, when clicking in any point, it should use the @grafana/llm package to ask about the closest bicing station and requirements to use it
+Add an option in the map, when clicking in any point, it should use the @grafana/llm package to ask about the closest bicing station and requirements to use it. Use a synchronous non-streaming api.
 ```
