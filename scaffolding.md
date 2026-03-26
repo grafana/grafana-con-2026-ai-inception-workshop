@@ -1,8 +1,11 @@
 ## First milestone - get scaffolded data source working
 
+Only copy one line at a time
+
 ```
 yarn dlx @grafana/create-plugin@latest
 
+It will ask you:
 "Select a plugin type": "Data source"
 “Add a backend to support server-side functionality?” say yes / true
 "Enter a name for your plugin": “bcapi”
@@ -10,7 +13,7 @@ yarn dlx @grafana/create-plugin@latest
 
 cd ./aiworkshop-bcapi-datasource
 yarn install
-mage build:linux
+mage -v build:linux
 yarn dev
 yarn server
 ```
@@ -21,6 +24,7 @@ yarn server
 cd ..
 yarn dlx @grafana/create-plugin@latest
 
+It will ask you:
 "Select a plugin type": "App"
 “Add a backend to support server-side functionality?” say yes / true
 "Enter a name for your plugin": “bcapi”
