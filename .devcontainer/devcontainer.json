@@ -9,7 +9,10 @@
     "vscode": {
       "extensions": [
         "golang.go"
-      ]
+      ],
+      "settings": {
+        "workbench.secondarySideBar.defaultVisibility": "hidden"
+      }
     }
   },
   "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash"
