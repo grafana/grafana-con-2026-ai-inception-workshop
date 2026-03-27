@@ -9,6 +9,6 @@ fi
 
 cd "$PLUGIN_DIR"
 
-npm install
+npm ci --no-audit --no-fund
 
 mage -v build:linux
