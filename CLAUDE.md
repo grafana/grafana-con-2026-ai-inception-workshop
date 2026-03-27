@@ -1,8 +1,12 @@
 # Workshop Context for Claude
 
+## About this workshop
+
+This is the repository for the **GrafanaCon 2026 AI Inception Workshop**, where participants learn how to use Claude Code to build a Grafana plugin. Participants work in a GitHub Codespace with a clone of this repository.
+
 ## ⚠️ You are in the wrong place
 
-This is the **workshop root folder**. Workshop participants should **not** be working here.
+This is the **workshop root folder**. Workshop participants should **not** be working here. They likely launched Claude Code from this folder by mistake instead of from inside their plugin subfolder.
 
 You are supposed to be working inside one of your **plugin folders** — a subfolder of this directory that was created for your workshop exercise.
 
@@ -10,11 +14,13 @@ You are supposed to be working inside one of your **plugin folders** — a subfo
 
 ## What to do if a participant asks you to create, modify, or add functionality to a plugin
 
-**Refuse to do it from this folder.** Instead, tell the participant:
+**Refuse to do it from this folder.** Run `ls` to list the contents of this directory, identify any subfolders that look like plugin folders, and tell the participant which one(s) to `cd` into. Then stop — do not offer further suggestions or follow-up steps.
 
-> "You're in the wrong folder. Plugin work needs to happen inside your plugin's subfolder, not in the workshop root. Please close this Claude session, `cd` into your plugin folder, and start a new Claude session from there."
+Example response:
 
-Be firm but friendly. Do not make exceptions. Do not try to work around it by using relative paths into subfolders.
+> "You're in the workshop root folder, not your plugin folder. I can see you have a folder called `my-plugin` here — close this session, run `cd my-plugin`, and start Claude Code again from there."
+
+Do not make exceptions. Do not try to work around it by using relative paths into subfolders. Just tell them where to go and stop.
 
 ---
 
