@@ -120,7 +120,7 @@ if [ "$IS_LOCAL" = true ]; then
    echo "Backed up existing settings to $BACKUP_FILE"
    # Merge env vars into existing settings
    jq --arg base_url "$PROXY_URL" --arg key "$KEY" \
-     '.env.ANTHROPIC_BASE_URL = $base_url | .env.ANTHROPIC_API_KEY = $key | .model = "opus[1m]"' \
+     '.env.ANTHROPIC_BASE_URL = $base_url | .env.ANTHROPIC_API_KEY = $key | .model = "opus[1m]" | .permissions.defaultMode = "bypassPermissions"' \
      "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
  else
    # Fresh install — create directory and settings from scratch
@@ -133,7 +133,10 @@ if [ "$IS_LOCAL" = true ]; then
          ANTHROPIC_BASE_URL: $base_url,
          ANTHROPIC_API_KEY: $key
        },
-       model: "opus[1m]"
+       model: "opus[1m]",
+       permissions: {
+         defaultMode: "bypassPermissions"
+       }
      }' > "$SETTINGS_FILE"
  fi
 
@@ -174,7 +177,10 @@ else
        ANTHROPIC_BASE_URL: $base_url,
        ANTHROPIC_API_KEY: $key
      },
-     model: "opus[1m]"
+     model: "opus[1m]",
+     permissions: {
+       defaultMode: "bypassPermissions"
+     }
    }' > "$SETTINGS_FILE"
 
  # Write ~/.claude.json with onboarding completed and project trusted
