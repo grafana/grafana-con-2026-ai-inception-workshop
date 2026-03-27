@@ -8,7 +8,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "golang.go"
+        "golang.go",
+        "-anthropic.claude-code"
       ],
       "settings": {
         "workbench.secondarySideBar.defaultVisibility": "hidden"
@@ -19,7 +20,7 @@
   "portsAttributes": {
     "3000": {
       "label": "Grafana",
-      "onAutoForward": "notify"
+      "onAutoForward": "openBrowserOnce"
     }
   },
   "otherPortsAttributes": {
