@@ -10,10 +10,6 @@
    bash setup.sh
    ```
 3. Enter the workshop password (shared by the instructor).
-4. Start Claude Code:
-   ```
-   claude
-   ```
 
 ## Useful Commands
 
@@ -26,7 +22,12 @@ yarn install          # Install dependencies
 mage build:linux      # Build backend (Go)
 yarn dev             # Start frontend dev server
 yarn server          # Start Docker container with Grafana
+
+# Start claude
+claude
 ```
+
+
 
 ## Workshop Resources
 
