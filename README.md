@@ -23,8 +23,6 @@ mage -v build:linux      # Build backend (Go)
 npm run dev             # Start frontend dev server
 npm run server          # Start Docker container with Grafana
 
-# Start claude
-claude
 ```
 
 

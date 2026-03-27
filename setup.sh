@@ -19,7 +19,6 @@ if [ "$IS_LOCAL" = true ]; then
  if [ -f "$BACKUP_FILE" ]; then
    echo "Setup has already been run."
    echo "To re-run, first run: bash unsetup.sh"
-   echo "You can run: claude"
    exit 0
  fi
  # Also check for fresh-install case: settings.json exists with our env vars but no backup
@@ -28,7 +27,6 @@ if [ "$IS_LOCAL" = true ]; then
    if [ "$EXISTING_BASE_URL" = "$PROXY_URL" ]; then
      echo "Setup has already been run."
      echo "To re-run, first run: bash unsetup.sh"
-     echo "You can run: claude"
      exit 0
    fi
  fi
@@ -36,7 +34,6 @@ else
  # Codespaces: original check
  if [ -f "$SETTINGS_FILE" ] && [ -f ~/.claude.json ]; then
    echo "Setup has already been run. To re-run, remove ~/.claude/ and ~/.claude.json first."
-   echo "You can run: claude"
    exit 0
  fi
 fi
@@ -170,7 +167,7 @@ if [ "$IS_LOCAL" = true ]; then
  fi
 
  echo ""
- echo "Done! You can now run: claude"
+ echo "Done!"
  echo "When you're done with the workshop, run: bash unsetup.sh"
 
 else
@@ -236,7 +233,7 @@ else
      }' > "$VSCODE_SETTINGS"
  fi
 
- echo "Done! You can now run: claude"
+ echo "Done!"
  echo "VS Code extension configured at $VSCODE_SETTINGS"
 fi
 
