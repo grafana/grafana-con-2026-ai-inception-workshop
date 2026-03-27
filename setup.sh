@@ -77,6 +77,15 @@ if ! command -v go &> /dev/null; then
  exit 1
 fi
 
+if [ "$IS_LOCAL" = true ]; then
+ if ! command -v docker &> /dev/null; then
+   echo "Error: Docker is required but not installed."
+   echo "Install it from https://docs.docker.com/get-docker/"
+   echo "Once installed, verify it works by running: docker run --rm hello-world"
+   exit 1
+ fi
+fi
+
 # Install mage
 if ! command -v mage &> /dev/null; then
  echo "Installing mage..."
@@ -120,7 +129,7 @@ if [ "$IS_LOCAL" = true ]; then
    echo "Backed up existing settings to $BACKUP_FILE"
    # Merge env vars into existing settings
    jq --arg base_url "$PROXY_URL" --arg key "$KEY" \
-     '.env.ANTHROPIC_BASE_URL = $base_url | .env.ANTHROPIC_API_KEY = $key | .model = "opus[1m]" | .permissions.defaultMode = "bypassPermissions"' \
+     '.env.ANTHROPIC_BASE_URL = $base_url | .env.ANTHROPIC_API_KEY = $key | .model = "opus[1m]" | .permissions.defaultMode = "bypassPermissions" | .skipDangerousModePermissionPrompt = true' \
      "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
  else
    # Fresh install — create directory and settings from scratch
@@ -136,7 +145,8 @@ if [ "$IS_LOCAL" = true ]; then
        model: "opus[1m]",
        permissions: {
          defaultMode: "bypassPermissions"
-       }
+       },
+       skipDangerousModePermissionPrompt: true
      }' > "$SETTINGS_FILE"
  fi
 
@@ -180,7 +190,8 @@ else
      model: "opus[1m]",
      permissions: {
        defaultMode: "bypassPermissions"
-     }
+     },
+     skipDangerousModePermissionPrompt: true
    }' > "$SETTINGS_FILE"
 
  # Write ~/.claude.json with onboarding completed and project trusted

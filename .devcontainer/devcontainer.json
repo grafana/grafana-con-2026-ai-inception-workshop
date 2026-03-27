@@ -15,5 +15,15 @@
       }
     }
   },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Grafana",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
   "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash"
 }
