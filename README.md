@@ -15,7 +15,7 @@
 
 ```bash
 # Create a new plugin
-npx @grafana/create-plugin@latest
+yarn dlx @grafana/create-plugin@latest
 
 # Plugin development
 yarn install          # Install dependencies
