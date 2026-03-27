@@ -10,7 +10,7 @@ else
   echo ">>> Plugin directory already exists, skipping scaffold."
 fi
 
-echo ">>> Installing frontend dependencies..."
+echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PLUGIN_DIR"
 npm install --no-audit --no-fund
 
