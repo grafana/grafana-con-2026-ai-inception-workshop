@@ -229,3 +229,5 @@ else
  echo "VS Code extension configured at $VSCODE_SETTINGS"
 fi
 
+bash "$PROJECT_DIR/scripts/milestone1.sh"
+
