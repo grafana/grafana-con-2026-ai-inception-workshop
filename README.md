@@ -15,13 +15,13 @@
 
 ```bash
 # Create a new plugin
-yarn dlx @grafana/create-plugin@latest
+npx @grafana/create-plugin@latest
 
 # Plugin development
-yarn install          # Install dependencies
-mage build:linux      # Build backend (Go)
-yarn dev             # Start frontend dev server
-yarn server          # Start Docker container with Grafana
+npm install          # Install dependencies
+mage -v build:linux      # Build backend (Go)
+npm run dev             # Start frontend dev server
+npm run server          # Start Docker container with Grafana
 
 # Start claude
 claude
