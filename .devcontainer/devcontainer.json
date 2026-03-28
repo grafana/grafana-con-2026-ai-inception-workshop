@@ -17,7 +17,8 @@
         "git.autofetch": false,
         "chat.agent.enabled": false,
         "terminal.chat.enabled": false,
-        "github.copilot.chat.terminalChatLocation": "chatView"
+        "github.copilot.chat.terminalChatLocation": "chatView",
+        "chat.disableAIFeatures": true
       }
     }
   },
