@@ -162,5 +162,16 @@ You can now modify the App views - anything you want to change on the map, promp
 
 ---
 
+## Congratulations!
+
+You've just built two Grafana plugins entirely with AI assistance:
+
+- **A data source plugin** that connects to a live Barcelona Bicing API, with a Go backend and a query editor with station selection
+- **An app plugin** with a station list view, an interactive map, and AI-powered station insights using the LLM package
+
+All of this — backend logic, frontend components, API integration, Docker configuration, and provisioning — was generated through natural language prompts.
+
+---
+
 Finished all milestones? Check out the **[Additional Challenges](additional-challenges.md)** for more ideas to extend your plugin.
 
