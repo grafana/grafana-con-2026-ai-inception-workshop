@@ -8,8 +8,8 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "PROMPTS.md",
-        "README.md"
+        "README.md",
+        "PROMPTS.md"
       ]
     },
     "vscode": {
@@ -20,7 +20,10 @@
       "settings": {
         "workbench.secondarySideBar.defaultVisibility": "hidden",
         "git.enabled": false,
-        "chat.disableAIFeatures": true
+        "chat.disableAIFeatures": true,
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        }
       }
     }
   },
