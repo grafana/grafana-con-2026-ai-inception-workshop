@@ -207,7 +207,7 @@ else
      }
    }' > ~/.claude.json
 
- echo "Done!"
+ echo "Claude setup is done"
 fi
 
 bash "$PROJECT_DIR/scripts/milestone1.sh"
