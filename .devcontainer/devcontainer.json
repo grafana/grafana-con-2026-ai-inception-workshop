@@ -13,8 +13,7 @@
       ],
       "settings": {
         "workbench.secondarySideBar.defaultVisibility": "hidden",
-        "git.confirmSync": false,
-        "git.autofetch": false,
+        "git.enabled": false,
         "chat.disableAIFeatures": true
       }
     }
