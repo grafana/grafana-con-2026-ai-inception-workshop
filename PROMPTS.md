@@ -7,6 +7,8 @@ This document contains the scaffolding steps and prompts used throughout the AI 
 
 > The initial scaffolding is handled automatically by `setup.sh` — start here after setup completes.
 
+> **Heads up:** This milestone requires **3 terminal tabs** running simultaneously — one for `npm run dev`, one for `npm run server`, and one for `claude`. Keep all three open throughout the milestone.
+
 In terminal, navigate to the plugin directory and start the dev server:
 
 ```
@@ -44,7 +46,7 @@ In **claude** we want to verify first that we are in the right folder.
 /skills
 ```
 
-Should show you that you have 2 skills available. No need to do anything with them just now — we just want to make sure you are in the right place. If not, check the folder you are in, it should be `aiworkshop-bcapi-datasource`.
+Should show you that you have 2 skills available (`validate-plugin` and `build-plugin`). No need to do anything with them just now — we just want to make sure you are in the right place. If you see a different number or no skills at all, check that you are inside the `aiworkshop-bcapi-datasource` folder and that `setup.sh` completed successfully.
 
 Now in **claude** switch to plan mode by running
 
@@ -63,7 +65,9 @@ Make sure to read and follow the official grafana plugins documentation on how t
 Make sure the provisioned datasource has the correct api key configured.
 ```
 
-At the end you will see a plan presented to you of what Claude proposes to do. If you are happy with the plan — accept it. The building of the plugin will take a while and it might ask you some questions in between — feel free to say yes to them.
+At the end you will see a plan presented to you of what Claude proposes to do. If you are happy with the plan — accept it. If something looks off, you can reject the plan and refine your prompt, or ask Claude to adjust specific parts before accepting. The building of the plugin will take a while and it might ask you some questions in between — feel free to say yes to them.
+
+> **Note:** Any time Claude makes changes to the Go backend, you need to restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again) for the changes to take effect. The frontend dev server (`npm run dev`) picks up changes automatically, but the backend does not.
 
 Once done, we want to verify that the plugin is working and can fetch data from the API. First, restart the Grafana server by going to the terminal running `npm run server`, stopping the process (Ctrl+C), and running it again:
 
@@ -104,6 +108,8 @@ You can now close the old terminal tabs (the ones that were running `npm run dev
 
 ### Building the App Interface
 
+> **Heads up:** Just like Milestone 1, you'll need **3 terminal tabs** running simultaneously — one for `npm run dev`, one for `npm run server`, and one for `claude`.
+
 Navigate to the app plugin directory and start the dev server and Grafana in separate terminals:
 
 ```
@@ -131,7 +137,7 @@ Verify you are in the right folder by running:
 /skills
 ```
 
-Should show you that you have 2 skills available. Now switch to plan mode:
+Should show you that you have 2 skills available (`validate-plugin` and `build-plugin`). If you see a different number, make sure you are inside `aiworkshop-bcapi-app`. Now switch to plan mode:
 
 ```
 /plan
@@ -142,7 +148,7 @@ Here is our prompt:
 Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The data source aiworkshop-bcapi-datasource is already provisioned and available. The page should allow me to select the bicing data source on top (default to the first aiworkshop-bcapi-datasource instance found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
 ```
 
-Review the plan and accept it if you are happy with it.
+Review the plan and accept it if you are happy with it. If not, reject it and tell Claude what to change — then accept the revised plan.
 
 Once done, verify the app is working:
 - Go to "Ports" tab, find "Grafana (3000)" and click the "Globe" icon to open your Grafana instance.
@@ -150,7 +156,7 @@ Once done, verify the app is working:
 
 ### Adding Map View
 
-Still in the same **claude** session, prompt:
+Still in the same **claude** session (no need to switch to plan mode), prompt:
 
 ```
 Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
@@ -160,6 +166,8 @@ Create a second page in the bicing app that I can access via the navigation menu
 ## Milestone 3 - Advanced Features
 
 ### Using LLM Package
+
+Continue in the same **claude** session from Milestone 2.
 
 ```
 Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it. Use a synchronous non-streaming api.

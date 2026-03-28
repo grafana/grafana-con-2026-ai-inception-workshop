@@ -43,7 +43,7 @@ Each station includes:
 Returns real-time availability for all stations.
 
 ```bash
-curl -s https://cc-workshop-proxy.grafana.fun/bcapi/station_status
+curl -H "Authorization: Bearer barcelona2026" -s https://cc-workshop-proxy.grafana.fun/bcapi/station_status
 ```
 
 Each station includes:
