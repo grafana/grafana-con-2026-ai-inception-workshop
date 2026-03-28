@@ -30,17 +30,21 @@ echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
 npm install --no-audit --no-fund
 
-# Symlink data source dist into app's docker-compose volumes
-echo ">>> Symlinking data source into app plugin..."
+# Overwrite docker-compose.yaml with volumes, env, and provisioning
+echo ">>> Configuring docker-compose with datasource and provisioning..."
 COMPOSE_FILE="$PROJECT_DIR/$APP_DIR/docker-compose.yaml"
-if [ -f "$COMPOSE_FILE" ] && ! grep -q "$DS_DIR" "$COMPOSE_FILE"; then
-  # Add datasource volume and unsigned plugins env var
-  sed -i "/volumes:/a\\      - ../$DS_DIR/dist:/var/lib/grafana/plugins/$DS_PLUGIN_ID" "$COMPOSE_FILE"
-  # Add GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS if not present
-  if ! grep -q "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS" "$COMPOSE_FILE"; then
-    sed -i "/environment:/a\\      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: $DS_PLUGIN_ID,aiworkshop-bcapi-app" "$COMPOSE_FILE"
-  fi
-fi
+cat > "$COMPOSE_FILE" <<EOF
+services:
+  grafana:
+    extends:
+      file: .config/docker-compose-base.yaml
+      service: grafana
+    volumes:
+      - ../$DS_DIR/dist:/var/lib/grafana/plugins/$DS_PLUGIN_ID
+      - ./provisioning:/etc/grafana/provisioning
+    environment:
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: $DS_PLUGIN_ID,aiworkshop-bcapi-app
+EOF
 
 # Provision the data source
 echo ">>> Provisioning data source..."
@@ -58,11 +62,6 @@ datasources:
     secureJsonData:
       apiKey: "barcelona2026"
 EOF
-
-# Mount provisioning dir in docker-compose if not already
-if [ -f "$COMPOSE_FILE" ] && ! grep -q "provisioning" "$COMPOSE_FILE"; then
-  sed -i "/volumes:/a\\      - ./provisioning:/etc/grafana/provisioning" "$COMPOSE_FILE"
-fi
 
 echo ""
 echo "============================================"
