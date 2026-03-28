@@ -9,27 +9,15 @@
    ```
    bash setup.sh
    ```
-3. Enter the workshop password (shared by the instructor).
-
-## Useful Commands
-
-```bash
-# Create a new plugin
-npx @grafana/create-plugin@latest
-
-# Plugin development
-npm install          # Install dependencies
-mage -v build:linux      # Build backend (Go)
-npm run dev             # Start frontend dev server
-npm run server          # Start Docker container with Grafana
-
-```
-
-
+3. Enter the workshop password (shared by the instructor) and wait for the setup to finish.
+4. Follow the **[Prompts](PROMPTS.md)** to start building your plugin.
 
 ## Workshop Resources
 
-- **[api.md](api.md)** - Barcelona Bicing API reference
-- **[scaffolding](scaffolding.md)** - Scaffolding commands
-- **[PROMPTS.md](PROMPTS.md)** - Complete list of prompts used throughout the workshop
-- [**Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
+- **[Prompts](prompts.md)** - Step-by-step prompts and commands for each milestone
+- [**Presentation Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
+
+## Additional Challenges
+
+Finished early or want to keep exploring after the workshop? 
+Check out the **[Additional Challenges](additional-challenges.md)** for extra ideas to extend your plugin.

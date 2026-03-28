@@ -17,4 +17,4 @@ npm install --no-audit --no-fund
 echo ">>> Building backend..."
 mage -v build:linux
 
-echo ">>> Done."
+echo ">>> Scaffolding of the plugin is complete."
