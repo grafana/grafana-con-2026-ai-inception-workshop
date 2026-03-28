@@ -14,7 +14,7 @@
 ## Workshop Resources
 
 - **[Prompts](prompts.md)** - Step-by-step prompts and commands for each milestone
-- [**Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
+- [**Presentation Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
 
 ## Additional Challenges
 
