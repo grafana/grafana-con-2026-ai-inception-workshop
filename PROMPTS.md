@@ -6,9 +6,10 @@ This document contains the scaffolding steps and prompts used throughout the AI 
 
 > The initial scaffolding is handled automatically by `setup.sh` — start here after setup completes.
 
-In terminal run:
+In terminal, navigate to the plugin directory and start the dev server:
 
 ```
+cd aiworkshop-bcapi-datasource
 npm run dev
 ```
 

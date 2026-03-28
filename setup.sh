@@ -216,6 +216,6 @@ echo ""
 echo "============================================"
 echo "  Setup complete!"
 echo ""
-echo "  Now run: cd aiworkshop-bcapi-datasource"
+echo "  Follow the prompts in PROMPTS.md"
 echo "============================================"
 
