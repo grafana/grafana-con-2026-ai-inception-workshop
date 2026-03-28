@@ -24,21 +24,55 @@ npm run server
 
 This command will also keep running as this is our Grafana server that we will be using.
 
+Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance.
 
-Open a NEW terminal and make sure you are in the plugin directory:
+Go to "Explore" and verify that you can see "bcapi" in the data source selector - it should display "No data" which is correct.
+
+Great we have a new empty data source plugin scaffolded and it is working.
+
+### Creating the Data Source
+
+Now open yet another NEW terminal and make sure you are in the plugin directory:
 
 ```
 cd aiworkshop-bcapi-datasource
 claude
 ```
 
-### Creating the Data Source
+In **claude** we want to verify first that we are in the right folder. 
 
 ```
-Help me create a grafana data source for the barcelona Bicing API described in @../api.md The configuration should allow me to set a base API URL with default to https://cc-workshop-proxy.grafana.fun/bcapi/The query editor should let me select the API to hit (station status or station information). If information is selected the user should be able to select the station from a dropdown.The data source should use a backend component in go using the grafana go sdk.Make sure to read and follow the official grafana plugins documentation on how to build grafana plugins.
+/skills
 ```
+
+Should show you that you have 2 skills available. This is great no need to use them we just want to make sure you are in the right place, if not check the folder you are in it should be `aiworkshop-bcapi-datasource`
+
+Now in **claude** switch to plan mode by running
+
+```
+/plan
+```
+
+Here is our prompt:
+```
+Help me create a grafana data source for the barcelona Bicing API described in @../api.md The configuration should allow me to set a base API URL with default to https://cc-workshop-proxy.grafana.fun/bcapi/The query editor should let me select the API to hit (station status or station information). If information is selected the user should be able to select the station from a dropdown.The data source should use a backend component in go using the grafana go sdk.Make sure to read and follow the official grafana plugins documentation on how to build grafana plugins. Make sure the provisioned datasource has the correct api key configured.
+```
+
+At the end you will see a plan presented to your of what claude proposes it should be doing. If you are happy with the plan - accept it.
+
+The building of the plugin will take a while and it might ask you some questions in between - feel free to say yes to them.
+
+Once done we want to verify that the plugin is working and can fetch data from the API.
+
+Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
+Open Explore and hit "Run query" and you should see some data being fetched from the Api.
+
+Awesome! You now have a actually working data source 
+
 
 ### Storing Knowledge
+
+In **claude** run this prompt
 
 ```
 Store the essential information about the created datasource in CLAUDE.md file
