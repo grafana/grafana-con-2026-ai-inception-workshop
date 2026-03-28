@@ -13,9 +13,11 @@
       ],
       "settings": {
         "git.autofetch": false,
+        "git.autoFetchPeriod": 0,
         "git.suggestSmartCommit": false,
         "chat.commandCenter.enabled": false,
-        "chat.editor.enabled": false
+        "chat.editor.enabled": false,
+        "workbench.secondarySideBar.defaultVisibility": "hidden"
       }
     }
   },
