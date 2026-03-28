@@ -56,10 +56,7 @@ Here is our prompt:
 Help me create a grafana data source for the barcelona Bicing API described in @../api.md The configuration should allow me to set a base API URL with default to https://cc-workshop-proxy.grafana.fun/bcapi/The query editor should let me select the API to hit (station status or station information). If information is selected the user should be able to select the station from a dropdown.The data source should use a backend component in go using the grafana go sdk.Make sure to read and follow the official grafana plugins documentation on how to build grafana plugins. Make sure the provisioned datasource has the correct api key configured.
 ```
 
-At the end you will see a plan presented to your of what claude proposes it should be doing. If you are happy with the plan - accept it.
-
-The building of the plugin will take a while and it might ask you some questions in between - feel free to say yes to them.
-
+At the end you will see a plan presented to your of what claude proposes it should be doing. If you are happy with the plan - accept it. The building of the plugin will take a while and it might ask you some questions in between - feel free to say yes to them.
 Once done we want to verify that the plugin is working and can fetch data from the API. Before doing that make sure to restart the grafana server by going to the terminal that has the grafana server running, stop the process and then run the server again
 ```
 npm run server
