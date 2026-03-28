@@ -28,5 +28,6 @@
   "otherPortsAttributes": {
     "onAutoForward": "silent"
   },
-  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash"
+  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash",
+  "postAttachCommand": "clear && echo '🚴 GrafanaCon 2026 - AI Inception Workshop' && echo '' && echo 'Run: bash setup.sh' && echo ''"
 }
