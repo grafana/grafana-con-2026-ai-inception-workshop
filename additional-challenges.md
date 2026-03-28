@@ -65,3 +65,19 @@ Add a natural language search — type what you need and let AI find the right s
 ```
 Add a text input at the top of the map page where users can describe what they are looking for in natural language, for example "find me a station near the beach with e-bikes available". Use the @grafana/llm package to interpret the request, match it against the station data, and highlight the best matching stations on the map.
 ```
+
+## Natural Language Queries
+
+Let users ask questions about station data in plain English and get answers directly in the app.
+
+```
+Add a chat-style input to the station list page where users can ask questions about the data in natural language, for example "which stations have the most e-bikes right now?" or "are there any stations with no bikes available?". Use the @grafana/llm package to interpret the question, query the station data, and display the answer inline below the input.
+```
+
+## Station Search and Filter
+
+Add a quick way to find specific stations without scrolling through the full list.
+
+```
+Add a search bar at the top of the station list page that filters stations in real time as the user types. It should match against station name, address, and district. Also add filter toggles to show only stations that have bikes available, only e-bike stations, or only stations that are currently in service.
+```
