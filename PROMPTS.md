@@ -24,6 +24,13 @@ npm run server
 This command will also keep running as this is our Grafana server that we will be using.
 
 
+Open a NEW terminal and make sure you are in the plugin directory:
+
+```
+cd aiworkshop-bcapi-datasource
+claude
+```
+
 ### Creating the Data Source
 
 ```
