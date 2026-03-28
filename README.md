@@ -9,7 +9,7 @@
    ```
    bash setup.sh
    ```
-3. Enter the workshop password (shared by the instructor).
+3. Enter the workshop password (shared by the instructor) and wait for the setup to finish.
 4. Follow the **[Prompts](PROMPTS.md)** to start building your plugin.
 
 ## Workshop Resources
