@@ -160,3 +160,7 @@ Now restart the Grafana server and got o "Administration -> Plugins and data -> 
 
 You can now modify the App views - anything you want to change on the map, prompt it to modify the behavior when an option on the map is clicked or whatever you wish, claude will help you out.
 
+---
+
+Finished all milestones? Check out the **[Additional Challenges](additional-challenges.md)** for more ideas to extend your plugin.
+
