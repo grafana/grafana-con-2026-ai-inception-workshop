@@ -92,6 +92,27 @@ You can now close the old terminal tabs (the ones that were running `npm run dev
 
 ### Building the App Interface
 
+Navigate to the app plugin directory and start the dev server and Grafana in separate terminals:
+
+```
+cd aiworkshop-bcapi-app
+npm run dev
+```
+
+In a NEW terminal:
+
+```
+cd aiworkshop-bcapi-app
+npm run server
+```
+
+In yet another NEW terminal, start claude:
+
+```
+cd aiworkshop-bcapi-app
+claude
+```
+
 ```
 Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The page should allow me to select the bicing data source on top (default to first found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
 ```
