@@ -9,7 +9,8 @@
     "vscode": {
       "extensions": [
         "golang.go",
-        "-anthropic.claude-code"
+        "-anthropic.claude-code",
+        "-github.copilot-chat"
       ],
       "settings": {
         "git.autofetch": false,
