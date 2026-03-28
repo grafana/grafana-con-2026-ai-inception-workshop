@@ -22,11 +22,9 @@ cd aiworkshop-bcapi-datasource
 npm run server
 ```
 
-This command will also keep running as this is our Grafana server that we will be using.
-
-Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance.
-
-Go to "Explore" and verify that you can see "bcapi" in the data source selector - it should display "No data" which is correct.
+This command will also keep running as this is our Grafana server that we will be using. 
+- Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
+- Now go to "Explore" and verify that you can see "bcapi" in the data source selector - it should display "No data" which is correct.
 
 Great we have a new empty data source plugin scaffolded and it is working.
 
@@ -67,8 +65,8 @@ Once done we want to verify that the plugin is working and can fetch data from t
 npm run server
 ```
 
-Now go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
-Open Explore and hit "Run query" and you should see some data being fetched from the Api.
+- Now go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
+- Open Explore and hit "Run query" and you should see some data being fetched from the Api.
 
 Awesome! You now have a actually working data source 
 
