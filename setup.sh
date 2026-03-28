@@ -212,3 +212,6 @@ fi
 
 bash "$PROJECT_DIR/scripts/milestone1.sh"
 
+echo ""
+echo ">>> Now run: cd aiworkshop-bcapi-datasource"
+
