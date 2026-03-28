@@ -1,8 +1,10 @@
 # Workshop Prompts
 
-This document contains the prompts used throughout the AI Inception workshop for building a Grafana plugin using AI.
+This document contains the scaffolding steps and prompts used throughout the AI Inception workshop for building a Grafana plugin using AI.
 
-## Data Source Development
+## Milestone 1 - Data Source
+
+> Scaffolding is handled automatically by `setup.sh` — start here after setup completes.
 
 ### Creating the Data Source
 
@@ -16,7 +18,22 @@ Help me create a grafana data source for the barcelona Bicing API described in @
 Store the essential information about the created datasource in CLAUDE.md file
 ```
 
-## App Development
+## Milestone 2 - Barcelona Biking App
+
+### Scaffolding
+
+```
+cd ..
+npx @grafana/create-plugin@latest
+
+It will ask you:
+"Select a plugin type": "App"
+"Add a backend to support server-side functionality?" say yes / true
+"Enter a name for your plugin": "bcapi"
+"Enter your organization name (usually your Grafana Cloud org)": "aiworkshop"
+
+npm install
+```
 
 ### Symlinking the Data Source
 
@@ -42,7 +59,7 @@ Help me modify this grafana app plugin so we have only 1 page in the navigation 
 Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
 ```
 
-## Advanced Features
+## Milestone 3 - Advanced Features
 
 ### Using LLM Package
 
