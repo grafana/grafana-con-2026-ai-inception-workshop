@@ -65,12 +65,11 @@ npm run server
 - Now go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
 - Open Explore and hit "Run query" and you should see some data being fetched from the Api.
 
-Awesome! You now have a actually working data source 
+Awesome! You now have a actually working data source.
 
 
 ### Storing Knowledge
-
-In **claude** run this prompt
+We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
 
 ```
 Store the essential information about the created datasource in CLAUDE.md file
