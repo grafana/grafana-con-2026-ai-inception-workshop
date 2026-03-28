@@ -75,6 +75,8 @@ We want to make sure that next time claude runs it actually remembers the most i
 Store the essential information about the created datasource in CLAUDE.md file
 ```
 
+Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
+
 ## Milestone 2 - Barcelona Biking App
 
 ### Scaffolding
