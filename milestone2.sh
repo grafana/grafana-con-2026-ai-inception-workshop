@@ -3,16 +3,18 @@ set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_DIR="aiworkshop-bcapi-app"
+DS_DIR="aiworkshop-bcapi-datasource"
+DS_PLUGIN_ID="aiworkshop-bcapi-datasource"
 
 # Stop any running npm processes (npm run dev, npm run server)
 echo ">>> Stopping running services..."
 pkill -f "npm run dev" 2>/dev/null || true
 pkill -f "npm run server" 2>/dev/null || true
 pkill -f "docker compose" 2>/dev/null || true
-docker compose -f "$PROJECT_DIR/aiworkshop-bcapi-datasource/docker-compose.yaml" down 2>/dev/null || true
+docker compose -f "$PROJECT_DIR/$DS_DIR/docker-compose.yaml" down 2>/dev/null || true
 
 echo ">>> Building data source dist for symlinking..."
-cd "$PROJECT_DIR/aiworkshop-bcapi-datasource"
+cd "$PROJECT_DIR/$DS_DIR"
 mage -v build:linux
 cd "$PROJECT_DIR"
 
@@ -25,8 +27,42 @@ else
 fi
 
 echo ">>> Installing frontend dependencies (this will take a while)..."
-cd "$APP_DIR"
+cd "$PROJECT_DIR/$APP_DIR"
 npm install --no-audit --no-fund
+
+# Symlink data source dist into app's docker-compose volumes
+echo ">>> Symlinking data source into app plugin..."
+COMPOSE_FILE="$PROJECT_DIR/$APP_DIR/docker-compose.yaml"
+if [ -f "$COMPOSE_FILE" ] && ! grep -q "$DS_DIR" "$COMPOSE_FILE"; then
+  # Add datasource volume and unsigned plugins env var
+  sed -i "/volumes:/a\\      - ../$DS_DIR/dist:/var/lib/grafana/plugins/$DS_PLUGIN_ID" "$COMPOSE_FILE"
+  # Add GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS if not present
+  if ! grep -q "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS" "$COMPOSE_FILE"; then
+    sed -i "/environment:/a\\      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: $DS_PLUGIN_ID,aiworkshop-bcapi-app" "$COMPOSE_FILE"
+  fi
+fi
+
+# Provision the data source
+echo ">>> Provisioning data source..."
+PROVISIONING_DIR="$PROJECT_DIR/$APP_DIR/provisioning/datasources"
+mkdir -p "$PROVISIONING_DIR"
+cat > "$PROVISIONING_DIR/bcapi.yaml" <<EOF
+apiVersion: 1
+datasources:
+  - name: Barcelona Bicing
+    type: $DS_PLUGIN_ID
+    access: proxy
+    isDefault: true
+    jsonData:
+      apiUrl: https://cc-workshop-proxy.grafana.fun/bcapi/
+    secureJsonData:
+      apiKey: "barcelona2026"
+EOF
+
+# Mount provisioning dir in docker-compose if not already
+if [ -f "$COMPOSE_FILE" ] && ! grep -q "provisioning" "$COMPOSE_FILE"; then
+  sed -i "/volumes:/a\\      - ./provisioning:/etc/grafana/provisioning" "$COMPOSE_FILE"
+fi
 
 echo ""
 echo "============================================"

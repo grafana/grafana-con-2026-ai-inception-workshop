@@ -86,19 +86,7 @@ cd $CODESPACE_VSCODE_FOLDER
 bash milestone2.sh
 ```
 
-This will stop running services, build the data source, scaffold the app plugin, and install dependencies.
-
-### Symlinking the Data Source
-
-```
-I want to add dist folder of ../aiworkshop-bcapi-datasource plugin to volumes of this plugin so that when I start this app plugin it has the datasource installed. Also add it to run unsigned.
-```
-
-### Provisioning the Data Source
-
-```
-I want to provision the aiworkshop-bcapi-datasource plugin to connect to https://cc-workshop-proxy.grafana.fun/bcapi/ you can see the details of the api in @../api.md
-```
+This will stop running services, build the data source, scaffold the app plugin, install dependencies, symlink the data source, and provision it.
 
 ### Building the App Interface
 
