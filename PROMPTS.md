@@ -15,9 +15,10 @@ npm run dev
 
 This command will not finish and will keep running and watching for any changes to your plugin and rebuilding it automatically.
 
-Now in a NEW terminal run
+Now in a NEW terminal run:
 
 ```
+cd aiworkshop-bcapi-datasource
 npm run server
 ```
 
