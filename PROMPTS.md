@@ -113,9 +113,24 @@ cd aiworkshop-bcapi-app
 claude
 ```
 
+Verify you are in the right folder by running:
+
+```
+/skills
+```
+
+Should show you that you have 2 skills available. Now switch to plan mode:
+
+```
+/plan
+```
+
+Here is our prompt:
 ```
 Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The page should allow me to select the bicing data source on top (default to first found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
 ```
+
+Review the plan and accept it if you are happy with it.
 
 ### Adding Map View
 
