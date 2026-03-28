@@ -62,9 +62,12 @@ At the end you will see a plan presented to your of what claude proposes it shou
 
 The building of the plugin will take a while and it might ask you some questions in between - feel free to say yes to them.
 
-Once done we want to verify that the plugin is working and can fetch data from the API.
+Once done we want to verify that the plugin is working and can fetch data from the API. Before doing that make sure to restart the grafana server by going to the terminal that has the grafana server running, stop the process and then run the server again
+```
+npm run server
+```
 
-Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
+Now go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
 Open Explore and hit "Run query" and you should see some data being fetched from the Api.
 
 Awesome! You now have a actually working data source 
