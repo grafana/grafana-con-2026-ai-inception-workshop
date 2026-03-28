@@ -79,20 +79,14 @@ Great now we can move on to building the next plugin - a biking app that is goin
 
 ## Milestone 2 - Barcelona Biking App
 
-### Scaffolding
+### Setup
 
 ```
-cd ..
-npx @grafana/create-plugin@latest
-
-It will ask you:
-"Select a plugin type": "App"
-"Add a backend to support server-side functionality?" say yes / true
-"Enter a name for your plugin": "bcapi"
-"Enter your organization name (usually your Grafana Cloud org)": "aiworkshop"
-
-npm install
+cd $CODESPACE_VSCODE_FOLDER
+bash milestone2.sh
 ```
+
+This will stop running services, build the data source, scaffold the app plugin, and install dependencies.
 
 ### Symlinking the Data Source
 
