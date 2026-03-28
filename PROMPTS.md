@@ -4,7 +4,20 @@ This document contains the scaffolding steps and prompts used throughout the AI 
 
 ## Milestone 1 - Data Source
 
-> Scaffolding is handled automatically by `setup.sh` — start here after setup completes.
+> The initial scaffolding is handled automatically by `setup.sh` — start here after setup completes.
+
+Now in the terminal run:
+
+npm run dev
+
+This command will not finish and will keep running and watching for any changes to your plugin and rebuilding it automatically.
+
+Now in a NEW terminal run
+
+npm run server
+
+This command will also keep running as this is our Grafana server that we will be using.
+
 
 ### Creating the Data Source
 
