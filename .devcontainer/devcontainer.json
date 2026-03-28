@@ -12,7 +12,10 @@
         "-anthropic.claude-code"
       ],
       "settings": {
-        "workbench.secondarySideBar.defaultVisibility": "hidden"
+        "workbench.secondarySideBar.defaultVisibility": "hidden",
+        "git.confirmSync": false,
+        "git.autofetch": false,
+        "chat.agent.enabled": false
       }
     }
   },
