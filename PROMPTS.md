@@ -88,6 +88,8 @@ bash milestone2.sh
 
 This will stop running services, build the data source, scaffold the app plugin, install dependencies, symlink the data source, and provision it.
 
+You can now close the old terminal tabs (the ones that were running `npm run dev` and `npm run server`) — the processes have been stopped.
+
 ### Building the App Interface
 
 ```
