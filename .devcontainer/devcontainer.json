@@ -32,5 +32,5 @@
   "otherPortsAttributes": {
     "onAutoForward": "silent"
   },
-  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash"
+  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash && bash .devcontainer/configure-vscode.sh"
 }
