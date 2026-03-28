@@ -5,7 +5,7 @@ PLUGIN_DIR="aiworkshop-bcapi-datasource"
 
 if [ ! -d "$PLUGIN_DIR" ]; then
   echo ">>> Scaffolding plugin..."
-  npx -y @grafana/create-plugin@latest --plugin-type=datasource --backend --plugin-name=bcapi --org-name=aiworkshop
+  npx -y @grafana/create-plugin@7.1.0 --plugin-type=datasource --backend --plugin-name=bcapi --org-name=aiworkshop
 else
   echo ">>> Plugin directory already exists, skipping scaffold."
 fi
