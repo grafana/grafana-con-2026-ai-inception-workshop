@@ -43,7 +43,7 @@ In **claude** we want to verify first that we are in the right folder.
 /skills
 ```
 
-Should show you that you have 2 skills available. This is great no need to use them we just want to make sure you are in the right place, if not check the folder you are in it should be `aiworkshop-bcapi-datasource`
+Should show you that you have 2 skills available. This is great no need to to anything just now we just want to make sure you are in the right place, if not check the folder you are in it should be `aiworkshop-bcapi-datasource`
 
 Now in **claude** switch to plan mode by running
 
