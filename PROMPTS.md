@@ -149,3 +149,5 @@ Create a second page in the bicing app that I can access via the navigation menu
 ```
 Add an option in the map, when clicking in any point, it should use the @grafana/llm package to ask about the closest bicing station and requirements to use it. Use a synchronous non-streaming api.
 ```
+
+Once this is done and working you will need an API key for OpenAI or Anthropic that you can save in the LLM App settings so that your plugin can use them.
