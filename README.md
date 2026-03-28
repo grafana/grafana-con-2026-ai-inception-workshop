@@ -18,4 +18,5 @@
 
 ## Additional Challenges
 
-Finished early or want to keep exploring after the workshop? Check out the **[Additional Challenges](additional-challenges.md)** for extra ideas to extend your plugin.
+Finished early or want to keep exploring after the workshop? 
+Check out the **[Additional Challenges](additional-challenges.md)** for extra ideas to extend your plugin.
