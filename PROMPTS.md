@@ -2,6 +2,7 @@
 
 This document contains the scaffolding steps and prompts used throughout the AI Inception workshop for building a Grafana plugin using AI.
 
+<a id="milestone-1"></a>
 ## Milestone 1 - Data Source
 
 > The initial scaffolding is handled automatically by `setup.sh` — start here after setup completes.
@@ -77,6 +78,7 @@ Store the essential information about the created datasource in CLAUDE.md file
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
 
+<a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
 
 ### Setup
@@ -142,6 +144,7 @@ Once done, verify the app is working:
 Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
 ```
 
+<a id="milestone-3"></a>
 ## Milestone 3 - Advanced Features
 
 ### Using LLM Package
