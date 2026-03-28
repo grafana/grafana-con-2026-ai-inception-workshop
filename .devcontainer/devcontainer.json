@@ -18,7 +18,6 @@
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
         },
-        "workbench.startupEditor": "none"
       }
     }
   },
@@ -33,5 +32,5 @@
     "onAutoForward": "silent"
   },
   "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash",
-  "postAttachCommand": "clear && echo '🚴 GrafanaCon 2026 - AI Inception Workshop' && echo '' && echo 'Run: bash setup.sh' && echo '' && code PROMPTS.md && code README.md"
+  "postAttachCommand": "clear && echo '🚴 GrafanaCon 2026 - AI Inception Workshop' && echo '' && echo 'Run: bash setup.sh' && echo ''"
 }
