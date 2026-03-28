@@ -132,6 +132,10 @@ Help me modify this grafana app plugin so we have only 1 page in the navigation 
 
 Review the plan and accept it if you are happy with it.
 
+Once done, verify the app is working:
+- Go to "Ports" tab, find "Grafana (3000)" and click the "Globe" icon to open your Grafana instance.
+- Navigate to the Bicing app page — you should see a list of stations with details appearing on hover.
+
 ### Adding Map View
 
 ```
