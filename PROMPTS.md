@@ -81,7 +81,7 @@ Awesome! You now have an actually working data source.
 We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
 
 ```
-Store the essential information about the created datasource in CLAUDE.md file
+Store the essential information about the created datasource in CLAUDE.md file, including the plugin ID, API endpoints, authentication method, and supported query types.
 ```
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
@@ -139,7 +139,7 @@ Should show you that you have 2 skills available. Now switch to plan mode:
 
 Here is our prompt:
 ```
-Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The page should allow me to select the bicing data source on top (default to first found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
+Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The data source aiworkshop-bcapi-datasource is already provisioned and available. The page should allow me to select the bicing data source on top (default to the first aiworkshop-bcapi-datasource instance found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
 ```
 
 Review the plan and accept it if you are happy with it.
@@ -162,7 +162,7 @@ Create a second page in the bicing app that I can access via the navigation menu
 ### Using LLM Package
 
 ```
-Add an option in the map, when clicking in any point, it should use the @grafana/llm package to ask about the closest bicing station and requirements to use it. Use a synchronous non-streaming api.
+Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it. Use a synchronous non-streaming api.
 ```
 
 Once this is done, prompt Claude to:
