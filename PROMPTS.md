@@ -90,6 +90,11 @@ Store the essential information about the created datasource in CLAUDE.md file, 
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
 
+> **Fell behind?** If you didn't manage to finish Milestone 1, you can check out the `milestone1-completed` branch from the root of the workshop folder in your Codespace and continue from there:
+> ```
+> git checkout milestone1-completed
+> ```
+
 <a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
 
