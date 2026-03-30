@@ -94,6 +94,8 @@ Select **Yes** and press Enter.
 
 ## After the workshop
 
+> ⚠️ **Important:** The workshop API key will stop working after the event. If you don't restore your configuration, Claude Code will fail to connect. Run the cleanup script below to get back to normal.
+
 To restore your original Claude Code configuration:
 
 ```bash
