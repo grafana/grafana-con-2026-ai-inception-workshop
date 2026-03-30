@@ -39,6 +39,9 @@ services:
     extends:
       file: .config/docker-compose-base.yaml
       service: grafana
+    build:
+      args:
+        development: "true"
     volumes:
       - ../$DS_DIR/dist:/var/lib/grafana/plugins/$DS_PLUGIN_ID
       - ./provisioning:/etc/grafana/provisioning

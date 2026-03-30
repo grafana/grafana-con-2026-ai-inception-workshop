@@ -17,4 +17,17 @@ npm install --no-audit --no-fund
 echo ">>> Building backend..."
 mage -v build:linux
 
+# Overwrite docker-compose.yaml to enable development mode for backend auto-reload
+echo ">>> Enabling development mode..."
+cat > docker-compose.yaml <<'EOF'
+services:
+  grafana:
+    extends:
+      file: .config/docker-compose-base.yaml
+      service: grafana
+    build:
+      args:
+        development: "true"
+EOF
+
 echo ">>> Scaffolding of the plugin is complete."
