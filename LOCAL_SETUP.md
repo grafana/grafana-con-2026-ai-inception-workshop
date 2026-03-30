@@ -10,6 +10,13 @@ Make sure you have the following installed:
 - **go** (1.25+)
 - **jq**
 - **curl**
+- **Docker** — [Install Docker](https://docs.docker.com/get-docker/)
+
+Verify Docker is working:
+
+```bash
+docker run hello-world
+```
 
 ### macOS (Homebrew)
 
