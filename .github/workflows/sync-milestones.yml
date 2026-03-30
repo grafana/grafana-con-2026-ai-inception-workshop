@@ -36,6 +36,8 @@ jobs:
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
       - name: Sync main into milestone1-completed
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           set -euo pipefail
 
@@ -52,14 +54,38 @@ jobs:
             exit 0
           fi
 
-          echo "Drift detected between $SOURCE and $TARGET. Merging directly."
+          echo "Drift detected between $SOURCE and $TARGET."
 
-          git checkout -b "$TARGET" "origin/$TARGET"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"
-          git push origin "$TARGET"
+          git checkout -b "$TARGET" "origin/$TARGET"
+
+          if git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"; then
+            echo "Merge succeeded. Pushing directly."
+            git push origin "$TARGET"
+          else
+            echo "::warning::Merge conflicts detected. Creating PR for manual resolution."
+            git merge --abort
+
+            SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
+            git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
+            git merge "origin/$SOURCE" --no-edit || true
+            git add -A
+            git commit --no-edit -m "chore: sync $SOURCE into $TARGET (conflicts need resolution)"
+            git push --force-with-lease origin "$SYNC_BRANCH"
+
+            PR_TITLE="chore: sync $SOURCE into $TARGET (conflicts)"
+            PR_BODY="Auto-generated PR because merging \`$SOURCE\` into \`$TARGET\` hit conflicts that need manual resolution."
+
+            EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "${EXISTING_PR:-}" ]; then
+              echo "PR #$EXISTING_PR already exists. Sync branch updated."
+              gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+            else
+              gh pr create --base "$TARGET" --head "$SYNC_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
+            fi
+          fi
 
   # Second: sync milestone1-completed into milestone2-completed
   sync-milestone2:
@@ -92,6 +118,8 @@ jobs:
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
       - name: Sync milestone1-completed into milestone2-completed
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           set -euo pipefail
 
@@ -111,11 +139,37 @@ jobs:
             exit 0
           fi
 
-          echo "Drift detected between $SOURCE and $TARGET. Merging directly."
+          echo "Drift detected between $SOURCE and $TARGET."
 
-          git checkout -b "$TARGET" "origin/$TARGET"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"
-          git push origin "$TARGET"
+          git checkout -b "$TARGET" "origin/$TARGET"
+
+          if git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"; then
+            echo "Merge succeeded. Pushing directly."
+            git push origin "$TARGET"
+          else
+            echo "::warning::Merge conflicts detected. Creating PR for manual resolution."
+            git merge --abort
+
+            SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
+            git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
+            git merge "origin/$SOURCE" --no-edit || true
+            git add -A
+            git commit --no-edit -m "chore: sync $SOURCE into $TARGET (conflicts need resolution)"
+            git push --force-with-lease origin "$SYNC_BRANCH"
+
+            PR_TITLE="chore: sync $SOURCE into $TARGET (conflicts)"
+            PR_BODY="Auto-generated PR because merging \`$SOURCE\` into \`$TARGET\` hit conflicts that need manual resolution.
+
+            \`$TARGET\` builds on top of \`$SOURCE\`, which in turn tracks \`main\`."
+
+            EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "${EXISTING_PR:-}" ]; then
+              echo "PR #$EXISTING_PR already exists. Sync branch updated."
+              gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+            else
+              gh pr create --base "$TARGET" --head "$SYNC_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
+            fi
+          fi
