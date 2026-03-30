@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://grafana.com/developers/plugin-tools/how-to-guides/data-source-plugins/fetch-data-from-an-api.md markdown 2>/dev/null)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://grafana.com/developers/plugin-tools/how-to-guides/data-source-plugins/add-authentication-for-data-source-plugins.md markdown 2>/dev/null)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://grafana.com/developers/plugin-tools/how-to-guides/data-source-plugins/add-resource-handler.md markdown 2>/dev/null)",
+      "Bash(find /home/academo/repos/grafana-con-2026-ai-inception-workshop/aiworkshop-bcapi-datasource/node_modules/@grafana/ui/dist -name *.d.ts -exec grep -l Select {})",
+      "Bash(2)",
+      "Bash(find /home/academo/repos/grafana-con-2026-ai-inception-workshop/aiworkshop-bcapi-datasource -path */grafana-plugin-sdk-go/backend/resource/httpadapter* -not -path */.git/*)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh \"https://developers.grafana.com/ui/latest/index.html?path=/docs/inputs-combobox--docs\" markdown 2>/dev/null)"
+    ]
+  }
+}
