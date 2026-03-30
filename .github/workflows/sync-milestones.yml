@@ -6,16 +6,12 @@ on:
       - main
 
 jobs:
-  sync-milestones:
+  # First: sync main into milestone1-completed
+  sync-milestone1:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    strategy:
-      matrix:
-        milestone:
-          - milestone1-completed
-          - milestone2-completed
     steps:
       - id: get-secrets
         uses: grafana/shared-workflows/actions/get-vault-secrets@f1614b210386ac420af6807a997ac7f6d96e477a # get-vault-secrets/v1.3.1
@@ -39,57 +35,142 @@ jobs:
           fetch-depth: 0
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
-      - name: Sync main into milestone branch
+      - name: Sync main into milestone1-completed
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          MILESTONE: ${{ matrix.milestone }}
+          SOURCE: main
+          TARGET: milestone1-completed
         run: |
           set -euo pipefail
 
-          # Check if milestone branch exists on remote
-          if ! git ls-remote --exit-code origin "$MILESTONE" > /dev/null 2>&1; then
-            echo "Branch $MILESTONE does not exist on remote. Skipping."
+          SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
+          PR_TITLE="chore: sync ${SOURCE} into ${TARGET}"
+          PR_BODY="Auto-generated PR to keep \`${TARGET}\` in sync with \`${SOURCE}\`.
+
+          This PR was created because new commits were pushed to \`${SOURCE}\` that are not yet in \`${TARGET}\`.
+
+          The sync branch is force-updated on each push to \`${SOURCE}\`, so this PR always reflects the latest state."
+
+          # Check if target branch exists on remote
+          if ! git ls-remote --exit-code origin "$TARGET" > /dev/null 2>&1; then
+            echo "Branch $TARGET does not exist on remote. Skipping."
             exit 0
           fi
 
-          # Check if main is already fully merged into the milestone branch
-          if git merge-base --is-ancestor origin/main "origin/$MILESTONE"; then
-            echo "No drift detected — main is already merged into $MILESTONE."
+          # Check if source is already fully merged into target
+          if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
+            echo "No drift detected — $SOURCE is already merged into $TARGET."
             exit 0
           fi
 
-          echo "Drift detected between main and $MILESTONE."
+          echo "Drift detected between $SOURCE and $TARGET."
 
-          SYNC_BRANCH="sync/main-into-${MILESTONE}"
-          PR_TITLE="chore: sync main into $MILESTONE"
-          PR_BODY="Auto-generated PR to keep \`$MILESTONE\` in sync with \`main\`.
-
-          This PR was created because new commits were pushed to \`main\` that are not yet in \`$MILESTONE\`.
-
-          The sync branch is force-updated on each push to \`main\`, so this PR always reflects the latest state."
-
-          # Create sync branch from the milestone branch and merge main into it
-          git checkout -b "$SYNC_BRANCH" "origin/$MILESTONE"
+          git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if ! git merge origin/main --no-edit; then
+          if ! git merge "origin/$SOURCE" --no-edit; then
             echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
             git add -A
-            git commit --no-edit -m "chore: merge main into $MILESTONE (conflicts need resolution)"
+            git commit --no-edit -m "chore: merge $SOURCE into $TARGET (conflicts need resolution)"
           fi
 
           git push --force-with-lease origin "$SYNC_BRANCH"
 
-          # Create PR if one doesn't already exist, otherwise just update the title/body
-          EXISTING_PR=$(gh pr list --base "$MILESTONE" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+          EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
           if [ -n "${EXISTING_PR:-}" ]; then
             echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
             gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
           else
             gh pr create \
-              --base "$MILESTONE" \
+              --base "$TARGET" \
+              --head "$SYNC_BRANCH" \
+              --title "$PR_TITLE" \
+              --body "$PR_BODY"
+          fi
+
+  # Second: sync milestone1-completed into milestone2-completed (runs after milestone1 sync)
+  sync-milestone2:
+    needs: sync-milestone1
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - id: get-secrets
+        uses: grafana/shared-workflows/actions/get-vault-secrets@f1614b210386ac420af6807a997ac7f6d96e477a # get-vault-secrets/v1.3.1
+        with:
+          vault_instance: ops
+          common_secrets: |
+            GITHUB_APP_ID=plugins-platform-bot-app:app-id
+            GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:private-key
+          export_env: false
+
+      - name: Generate token
+        id: generate_token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        with:
+          app-id: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_ID }}
+          private-key: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          fetch-depth: 0
+          persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
+
+      - name: Sync milestone1-completed into milestone2-completed
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          SOURCE: milestone1-completed
+          TARGET: milestone2-completed
+        run: |
+          set -euo pipefail
+
+          SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
+          PR_TITLE="chore: sync ${SOURCE} into ${TARGET}"
+          PR_BODY="Auto-generated PR to keep \`${TARGET}\` in sync with \`${SOURCE}\`.
+
+          \`${TARGET}\` builds on top of \`${SOURCE}\`, which in turn tracks \`main\`.
+          This PR was created because \`${SOURCE}\` has commits not yet in \`${TARGET}\`.
+
+          The sync branch is force-updated on each push to \`main\`, so this PR always reflects the latest state."
+
+          # Check if target branch exists on remote
+          if ! git ls-remote --exit-code origin "$TARGET" > /dev/null 2>&1; then
+            echo "Branch $TARGET does not exist on remote. Skipping."
+            exit 0
+          fi
+
+          # Check if source is already fully merged into target
+          if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
+            echo "No drift detected — $SOURCE is already merged into $TARGET."
+            exit 0
+          fi
+
+          echo "Drift detected between $SOURCE and $TARGET."
+
+          git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if ! git merge "origin/$SOURCE" --no-edit; then
+            echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
+            git add -A
+            git commit --no-edit -m "chore: merge $SOURCE into $TARGET (conflicts need resolution)"
+          fi
+
+          git push --force-with-lease origin "$SYNC_BRANCH"
+
+          EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "${EXISTING_PR:-}" ]; then
+            echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
+            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+          else
+            gh pr create \
+              --base "$TARGET" \
               --head "$SYNC_BRANCH" \
               --title "$PR_TITLE" \
               --body "$PR_BODY"
