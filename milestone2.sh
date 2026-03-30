@@ -13,8 +13,11 @@ pkill -f "npm run server" 2>/dev/null || true
 pkill -f "docker compose" 2>/dev/null || true
 docker compose -f "$PROJECT_DIR/$DS_DIR/docker-compose.yaml" down 2>/dev/null || true
 
-echo ">>> Building data source dist for symlinking..."
+echo ">>> Building data source frontend..."
 cd "$PROJECT_DIR/$DS_DIR"
+npm run build
+
+echo ">>> Building data source backend..."
 mage -v build:linux
 cd "$PROJECT_DIR"
 
