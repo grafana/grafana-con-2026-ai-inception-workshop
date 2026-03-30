@@ -37,6 +37,7 @@ jobs:
         with:
           token: ${{ steps.generate_token.outputs.token }}
           fetch-depth: 0
+          persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
       - name: Sync main into milestone branch
         env:
