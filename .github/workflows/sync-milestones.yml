@@ -1,0 +1,96 @@
+name: Sync milestone branches with main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-milestones:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      matrix:
+        milestone:
+          - milestone1-completed
+          - milestone2-completed
+    steps:
+      - id: get-secrets
+        uses: grafana/shared-workflows/actions/get-vault-secrets@a37de51f3d713a30a9e4b21bcdfbd38170020593 # get-vault-secrets/v1.3.0
+        with:
+          vault_instance: ops
+          common_secrets: |
+            GITHUB_APP_ID=plugins-platform-bot-app:app-id
+            GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:private-key
+          export_env: false
+
+      - name: Generate token
+        id: generate_token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_ID }}
+          private-key: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          fetch-depth: 0
+          persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
+
+      - name: Sync main into milestone branch
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          MILESTONE: ${{ matrix.milestone }}
+        run: |
+          set -euo pipefail
+
+          # Check if milestone branch exists on remote
+          if ! git ls-remote --exit-code origin "$MILESTONE" > /dev/null 2>&1; then
+            echo "Branch $MILESTONE does not exist on remote. Skipping."
+            exit 0
+          fi
+
+          # Check if main is already fully merged into the milestone branch
+          if git merge-base --is-ancestor origin/main "origin/$MILESTONE"; then
+            echo "No drift detected — main is already merged into $MILESTONE."
+            exit 0
+          fi
+
+          echo "Drift detected between main and $MILESTONE."
+
+          SYNC_BRANCH="sync/main-into-${MILESTONE}"
+          PR_TITLE="chore: sync main into $MILESTONE"
+          PR_BODY="Auto-generated PR to keep \`$MILESTONE\` in sync with \`main\`.
+
+          This PR was created because new commits were pushed to \`main\` that are not yet in \`$MILESTONE\`.
+
+          The sync branch is force-updated on each push to \`main\`, so this PR always reflects the latest state."
+
+          # Create sync branch from the milestone branch and merge main into it
+          git checkout -b "$SYNC_BRANCH" "origin/$MILESTONE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if ! git merge origin/main --no-edit; then
+            echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
+            git add -A
+            git commit --no-edit -m "chore: merge main into $MILESTONE (conflicts need resolution)"
+          fi
+
+          git push --force-with-lease origin "$SYNC_BRANCH"
+
+          # Create PR if one doesn't already exist, otherwise just update the title/body
+          EXISTING_PR=$(gh pr list --base "$MILESTONE" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "${EXISTING_PR:-}" ]; then
+            echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
+            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+          else
+            gh pr create \
+              --base "$MILESTONE" \
+              --head "$SYNC_BRANCH" \
+              --title "$PR_TITLE" \
+              --body "$PR_BODY"
+          fi
