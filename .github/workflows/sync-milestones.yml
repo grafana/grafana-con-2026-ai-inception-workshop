@@ -36,61 +36,32 @@ jobs:
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
       - name: Sync main into milestone1-completed
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          SOURCE: main
-          TARGET: milestone1-completed
         run: |
           set -euo pipefail
 
-          SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
-          PR_TITLE="chore: sync ${SOURCE} into ${TARGET}"
-          PR_BODY="Auto-generated PR to keep \`${TARGET}\` in sync with \`${SOURCE}\`.
+          SOURCE="main"
+          TARGET="milestone1-completed"
 
-          This PR was created because new commits were pushed to \`${SOURCE}\` that are not yet in \`${TARGET}\`.
-
-          The sync branch is force-updated on each push to \`${SOURCE}\`, so this PR always reflects the latest state."
-
-          # Check if target branch exists on remote
           if ! git ls-remote --exit-code origin "$TARGET" > /dev/null 2>&1; then
             echo "Branch $TARGET does not exist on remote. Skipping."
             exit 0
           fi
 
-          # Check if source is already fully merged into target
           if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
             echo "No drift detected — $SOURCE is already merged into $TARGET."
             exit 0
           fi
 
-          echo "Drift detected between $SOURCE and $TARGET."
+          echo "Drift detected between $SOURCE and $TARGET. Merging directly."
 
-          git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
-
+          git checkout -b "$TARGET" "origin/$TARGET"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if ! git merge "origin/$SOURCE" --no-edit; then
-            echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
-            git add -A
-            git commit --no-edit -m "chore: merge $SOURCE into $TARGET (conflicts need resolution)"
-          fi
+          git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"
+          git push origin "$TARGET"
 
-          git push --force-with-lease origin "$SYNC_BRANCH"
-
-          EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [ -n "${EXISTING_PR:-}" ]; then
-            echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
-            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
-          else
-            gh pr create \
-              --base "$TARGET" \
-              --head "$SYNC_BRANCH" \
-              --title "$PR_TITLE" \
-              --body "$PR_BODY"
-          fi
-
-  # Second: sync milestone1-completed into milestone2-completed (runs after milestone1 sync)
+  # Second: sync milestone1-completed into milestone2-completed
   sync-milestone2:
     needs: sync-milestone1
     runs-on: ubuntu-latest
@@ -121,57 +92,30 @@ jobs:
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
       - name: Sync milestone1-completed into milestone2-completed
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          SOURCE: milestone1-completed
-          TARGET: milestone2-completed
         run: |
           set -euo pipefail
 
-          SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
-          PR_TITLE="chore: sync ${SOURCE} into ${TARGET}"
-          PR_BODY="Auto-generated PR to keep \`${TARGET}\` in sync with \`${SOURCE}\`.
+          SOURCE="milestone1-completed"
+          TARGET="milestone2-completed"
 
-          \`${TARGET}\` builds on top of \`${SOURCE}\`, which in turn tracks \`main\`.
-          This PR was created because \`${SOURCE}\` has commits not yet in \`${TARGET}\`.
-
-          The sync branch is force-updated on each push to \`main\`, so this PR always reflects the latest state."
-
-          # Check if target branch exists on remote
           if ! git ls-remote --exit-code origin "$TARGET" > /dev/null 2>&1; then
             echo "Branch $TARGET does not exist on remote. Skipping."
             exit 0
           fi
 
-          # Check if source is already fully merged into target
+          # Re-fetch to pick up any changes from the milestone1 sync job
+          git fetch origin "$SOURCE"
+
           if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
             echo "No drift detected — $SOURCE is already merged into $TARGET."
             exit 0
           fi
 
-          echo "Drift detected between $SOURCE and $TARGET."
+          echo "Drift detected between $SOURCE and $TARGET. Merging directly."
 
-          git checkout -b "$SYNC_BRANCH" "origin/$TARGET"
-
+          git checkout -b "$TARGET" "origin/$TARGET"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if ! git merge "origin/$SOURCE" --no-edit; then
-            echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
-            git add -A
-            git commit --no-edit -m "chore: merge $SOURCE into $TARGET (conflicts need resolution)"
-          fi
-
-          git push --force-with-lease origin "$SYNC_BRANCH"
-
-          EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [ -n "${EXISTING_PR:-}" ]; then
-            echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
-            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
-          else
-            gh pr create \
-              --base "$TARGET" \
-              --head "$SYNC_BRANCH" \
-              --title "$PR_TITLE" \
-              --body "$PR_BODY"
-          fi
+          git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"
+          git push origin "$TARGET"
