@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRootProps, PluginType } from '@grafana/data';
 import { render, waitFor } from '@testing-library/react';
 import App from './App';
+
+jest.mock('../../utils/datasource', () => ({
+  getDatasourceInstances: () => [],
+  fetchStationList: () => Promise.resolve([]),
+  fetchStationDetail: () => Promise.resolve(null),
+  clearDetailCache: () => {},
+}));
 
 describe('Components/App', () => {
   let props: AppRootProps;
@@ -28,7 +35,9 @@ describe('Components/App', () => {
   test('renders without an error', async () => {
     const { container } = render(
       <MemoryRouter>
-        <App {...props} />
+        <Suspense fallback={null}>
+          <App {...props} />
+        </Suspense>
       </MemoryRouter>
     );
 

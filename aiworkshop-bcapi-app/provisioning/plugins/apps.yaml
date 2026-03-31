@@ -9,3 +9,11 @@ apps:
       apiUrl: http://default-url.com
     secureJsonData:
       apiKey: secret-key
+
+  - type: 'grafana-llm-app'
+    org_id: 1
+    org_name: 'aiworkshop'
+    disabled: false
+    jsonData:
+      openAI: {}
+    secureJsonData: {}

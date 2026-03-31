@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://grafana.com/developers/grafana-llm-app/llms.txt markdown 2>/dev/null)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://grafana.com/developers/grafana-llm-app/index.md markdown 2>/dev/null)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://www.npmjs.com/package/@grafana/llm markdown)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://github.com/grafana/grafana-llm-app/blob/main/packages/grafana-llm-frontend/src/openai.ts markdown)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://raw.githubusercontent.com/grafana/grafana-llm-app/main/packages/grafana-llm-frontend/src/openai.ts markdown 2>/dev/null)",
+      "Bash(/home/academo/.dotfiles/scripts/browser-fetch/extract_content.sh https://raw.githubusercontent.com/grafana/grafana-llm-app/main/packages/grafana-llm-frontend/src/llm.ts markdown 2>/dev/null)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(find /home/academo/repos/grafana-con-2026-ai-inception-workshop/aiworkshop-bcapi-app -type f -name *docker* -o -name *grafana*)"
     ]
   }
 }

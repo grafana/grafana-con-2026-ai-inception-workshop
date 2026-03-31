@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } 
 import { css } from '@emotion/css';
 import { GrafanaTheme2 } from '@grafana/data';
 import { PluginPage } from '@grafana/runtime';
-import { Alert, Combobox, type ComboboxOption, Spinner, useStyles2 } from '@grafana/ui';
+import { Alert, Button, Combobox, type ComboboxOption, Modal, Spinner, useStyles2 } from '@grafana/ui';
 import { Map as MapGL, Source, Layer, Popup, NavigationControl, type MapRef, type MapMouseEvent, type LayerProps } from 'react-map-gl/maplibre';
 import type { GeoJSON } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { llm } from '@grafana/llm';
 import { StationInfo, StationStatus } from '../types';
 import { getDatasourceInstances, fetchAllStationInfo, fetchAllStationStatus } from '../utils/datasource';
 import { testIds } from '../components/testIds';
@@ -132,6 +133,73 @@ const STATION_LAYER: LayerProps = {
 
 const BARCELONA_CENTER = { longitude: 2.1734, latitude: 41.3851 };
 
+function useAskAI() {
+  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiStationName, setAiStationName] = useState<string>('');
+
+  const askAI = useCallback(async (properties: Record<string, unknown>) => {
+    const stationName = String(properties.name ?? 'Unknown');
+    setAiStationName(stationName);
+    setAiLoading(true);
+    setAiError(null);
+    setAiResponse(null);
+    try {
+      const isEnabled = await llm.enabled();
+      if (!isEnabled) {
+        setAiError('Grafana LLM plugin is not enabled. Please install and configure the grafana-llm-app plugin.');
+        return;
+      }
+
+      const response = await llm.chatCompletions({
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a helpful assistant that provides concise information about Bicing bike-sharing stations in Barcelona. ' +
+              'Keep your answers short and practical (3-5 sentences max).',
+          },
+          {
+            role: 'user',
+            content:
+              `Tell me about this Bicing station and the requirements to use it:\n` +
+              `- Name: ${stationName}\n` +
+              `- Address: ${String(properties.address ?? 'Unknown')}\n` +
+              `- Capacity: ${String(properties.capacity ?? 'Unknown')} docks\n` +
+              `- Type: ${String(properties.physical_configuration ?? 'Unknown')}\n` +
+              `- Available bikes: ${String(properties.num_bikes_available ?? 0)} (${String(properties.mechanical ?? 0)} mechanical, ${String(properties.ebike ?? 0)} e-bike)\n` +
+              `- Available docks: ${String(properties.num_docks_available ?? 0)}\n` +
+              `- Charging station: ${properties.is_charging_station ? 'Yes' : 'No'}`,
+          },
+        ],
+      });
+
+      const content = response.choices?.[0]?.message?.content;
+      if (content) {
+        setAiResponse(content);
+      } else {
+        setAiError('No response from LLM.');
+      }
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Failed to get AI response.');
+    } finally {
+      setAiLoading(false);
+    }
+  }, []);
+
+  const dismiss = useCallback(() => {
+    setAiResponse(null);
+    setAiError(null);
+    setAiLoading(false);
+    setAiStationName('');
+  }, []);
+
+  const isOpen = aiLoading || aiResponse !== null || aiError !== null;
+
+  return { aiResponse, aiLoading, aiError, aiStationName, isOpen, askAI, dismiss };
+}
+
 function MapPage() {
   const s = useStyles2(getStyles);
   const mapRef = useRef<MapRef>(null);
@@ -150,6 +218,8 @@ function MapPage() {
     latitude: number;
     properties: Record<string, unknown>;
   } | null>(null);
+
+  const ai = useAskAI();
 
   const handleDsChange = useCallback((option: ComboboxOption<string>) => {
     setSelectedDs(option.value);
@@ -263,18 +333,30 @@ function MapPage() {
                   onClose={() => setPopupInfo(null)}
                   maxWidth="320px"
                 >
-                  <StationPopup properties={popupInfo.properties} />
+                  <StationPopup properties={popupInfo.properties} onAskAI={ai.askAI} />
                 </Popup>
               )}
             </MapGL>
           </div>
+        )}
+
+        {ai.isOpen && (
+          <Modal title={`AI Info — ${ai.aiStationName}`} isOpen onDismiss={ai.dismiss}>
+            {ai.aiLoading && (
+              <div className={s.modalLoading}>
+                <Spinner /> Asking AI...
+              </div>
+            )}
+            {ai.aiError && <Alert severity="error" title="AI Error">{ai.aiError}</Alert>}
+            {ai.aiResponse && <p style={{ whiteSpace: 'pre-wrap' }}>{ai.aiResponse}</p>}
+          </Modal>
         )}
       </div>
     </PluginPage>
   );
 }
 
-function StationPopup({ properties }: { properties: Record<string, unknown> }) {
+function StationPopup({ properties, onAskAI }: { properties: Record<string, unknown>; onAskAI: (properties: Record<string, unknown>) => void }) {
   const s = useStyles2(getPopupStyles);
   const p = properties;
   const lastReported = Number(p.last_reported) || 0;
@@ -302,6 +384,11 @@ function StationPopup({ properties }: { properties: Record<string, unknown> }) {
           )}
         </div>
       )}
+      <div className={s.section}>
+        <Button size="sm" variant="primary" onClick={() => onAskAI(p)}>
+          Ask AI about this station
+        </Button>
+      </div>
     </div>
   );
 }
@@ -322,6 +409,12 @@ const getStyles = (theme: GrafanaTheme2) => ({
     minHeight: '500px',
     borderRadius: theme.shape.radius.default,
     overflow: 'hidden',
+  }),
+  modalLoading: css({
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+    padding: theme.spacing(2),
   }),
 });
 
