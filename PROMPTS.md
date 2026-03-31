@@ -176,6 +176,11 @@ Still in the same **claude** session (no need to switch to plan mode), prompt:
 Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
 ```
 
+> **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
+> ```
+> git checkout milestone2-completed
+> ```
+
 <a id="milestone-3"></a>
 ## Milestone 3 - Advanced Features
 
