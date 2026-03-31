@@ -33,6 +33,12 @@ echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
 npm install --no-audit --no-fund
 
+echo ">>> Building app frontend..."
+npm run build
+
+echo ">>> Building app backend..."
+mage -v build:linux
+
 # Overwrite docker-compose.yaml with volumes, env, and provisioning
 echo ">>> Configuring docker-compose with datasource and provisioning..."
 COMPOSE_FILE="$PROJECT_DIR/$APP_DIR/docker-compose.yaml"
