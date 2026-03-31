@@ -36,6 +36,16 @@ npm run server
 npm run e2e
 ```
 
+## On-Demand Loading and Pagination
+
+The app probably loads all station information at once. Make it smarter by loading details on demand and adding pagination to the list.
+
+```
+Refactor the station list page so it does not load all station information upfront.
+Add pagination to the station list.
+Load station details on demand only when the user hovers over or selects a station.
+```
+
 ## Color-Coded Map Markers
 
 Make the map instantly tell you where bikes are available by coloring markers based on availability.

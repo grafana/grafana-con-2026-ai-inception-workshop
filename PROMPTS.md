@@ -57,10 +57,14 @@ Now in **claude** switch to plan mode by running
 Here is our prompt:
 ```
 Help me create a grafana data source for the barcelona Bicing API described in @../api.md
+
 The configuration should allow me to set a base API URL with default to https://cc-workshop-proxy.grafana.fun/bcapi/
+
 The query editor should let me select the API to hit (station status or station information).
 If information is selected the user should be able to select the station from a dropdown.
+
 The data source should use a backend component in go using the grafana go sdk.
+
 Make sure to read and follow the official grafana plugins documentation on how to build grafana plugins.
 Make sure the provisioned datasource has the correct api key configured.
 ```
@@ -150,7 +154,12 @@ Should show you that you have 2 skills available (`validate-plugin` and `build-p
 
 Here is our prompt:
 ```
-Help me modify this grafana app plugin so we have only 1 page in the navigation menu. The data source aiworkshop-bcapi-datasource is already provisioned and available. The page should allow me to select the bicing data source on top (default to the first aiworkshop-bcapi-datasource instance found) and let me see the list of stations in a list. Make it so I can see the details of a station when I put my mouse over each element.
+Help me modify this grafana app plugin so we have only 1 page in the navigation menu.
+The data source aiworkshop-bcapi-datasource is already provisioned and available.
+The page should allow me to select the bicing data source on top (default to the first aiworkshop-bcapi-datasource instance found).
+Use the datasource to query the API — do not make HTTP requests to the API directly.
+Let me see the list of stations in a list.
+Make it so I can see the details of a station when I put my mouse over each element.
 ```
 
 Review the plan and accept it if you are happy with it. If not, reject it and tell Claude what to change — then accept the revised plan.
@@ -166,6 +175,11 @@ Still in the same **claude** session (no need to switch to plan mode), prompt:
 ```
 Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
 ```
+
+> **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
+> ```
+> git checkout milestone2-completed
+> ```
 
 <a id="milestone-3"></a>
 ## Milestone 3 - Advanced Features

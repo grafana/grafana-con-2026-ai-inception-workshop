@@ -13,8 +13,11 @@ pkill -f "npm run server" 2>/dev/null || true
 pkill -f "docker compose" 2>/dev/null || true
 docker compose -f "$PROJECT_DIR/$DS_DIR/docker-compose.yaml" down 2>/dev/null || true
 
-echo ">>> Building data source dist for symlinking..."
+echo ">>> Building data source frontend..."
 cd "$PROJECT_DIR/$DS_DIR"
+npm run build
+
+echo ">>> Building data source backend..."
 mage -v build:linux
 cd "$PROJECT_DIR"
 
@@ -29,6 +32,12 @@ fi
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
 npm install --no-audit --no-fund
+
+echo ">>> Building app frontend..."
+npm run build
+
+echo ">>> Building app backend..."
+mage -v build:linux
 
 # Overwrite docker-compose.yaml with volumes, env, and provisioning
 echo ">>> Configuring docker-compose with datasource and provisioning..."
@@ -61,7 +70,7 @@ datasources:
     access: proxy
     isDefault: true
     jsonData:
-      apiUrl: https://cc-workshop-proxy.grafana.fun/bcapi/
+      baseURL: https://cc-workshop-proxy.grafana.fun/bcapi/
     secureJsonData:
       apiKey: "barcelona2026"
 EOF
