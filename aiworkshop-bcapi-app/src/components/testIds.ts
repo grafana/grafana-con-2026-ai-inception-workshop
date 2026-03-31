@@ -10,4 +10,8 @@ export const testIds = {
     stationList: 'data-testid stations-list',
     stationItem: 'data-testid stations-item',
   },
+  map: {
+    container: 'data-testid pg-map-container',
+    datasourceSelect: 'data-testid map-ds-select',
+  },
 };

@@ -87,6 +87,14 @@ async function getStatusMap(dsUid: string): Promise<Map<string, StationStatus>> 
   return map;
 }
 
+export async function fetchAllStationInfo(dsUid: string): Promise<StationInfo[]> {
+  return queryDatasource<StationInfo>(dsUid, 'station_information', 'info');
+}
+
+export async function fetchAllStationStatus(dsUid: string): Promise<StationStatus[]> {
+  return queryDatasource<StationStatus>(dsUid, 'station_status', 'status');
+}
+
 export async function fetchStationDetail(dsUid: string, stationId: string): Promise<StationDetail> {
   const cached = detailCache.get(stationId);
   if (cached) {

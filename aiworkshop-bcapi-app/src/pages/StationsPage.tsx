@@ -201,7 +201,7 @@ function StationTooltip({ detail, loading, name }: { detail: StationDetail | nul
           <div>Docks disabled: {status.num_docks_disabled}</div>
           <div>Status: {status.status}</div>
           {status.last_reported > 0 && (
-            <div>Last reported: {new Date(status.last_reported * 1000).toLocaleString()}</div>
+            <div>Last reported: {new Date(status.last_reported).toLocaleString()}</div>
           )}
         </div>
       )}
