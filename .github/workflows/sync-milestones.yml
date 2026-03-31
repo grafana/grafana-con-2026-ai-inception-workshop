@@ -6,24 +6,12 @@ on:
       - main
 
 jobs:
-<<<<<<< HEAD
-  sync-milestones:
-=======
   # First: sync main into milestone1-completed
   sync-milestone1:
->>>>>>> origin/main
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-<<<<<<< HEAD
-    strategy:
-      matrix:
-        milestone:
-          - milestone1-completed
-          - milestone2-completed
-=======
->>>>>>> origin/main
     steps:
       - id: get-secrets
         uses: grafana/shared-workflows/actions/get-vault-secrets@f1614b210386ac420af6807a997ac7f6d96e477a # get-vault-secrets/v1.3.1
@@ -47,39 +35,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
 
-<<<<<<< HEAD
-      - name: Sync main into milestone branch
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          MILESTONE: ${{ matrix.milestone }}
-        run: |
-          set -euo pipefail
-
-          # Check if milestone branch exists on remote
-          if ! git ls-remote --exit-code origin "$MILESTONE" > /dev/null 2>&1; then
-            echo "Branch $MILESTONE does not exist on remote. Skipping."
-            exit 0
-          fi
-
-          # Check if main is already fully merged into the milestone branch
-          if git merge-base --is-ancestor origin/main "origin/$MILESTONE"; then
-            echo "No drift detected — main is already merged into $MILESTONE."
-            exit 0
-          fi
-
-          echo "Drift detected between main and $MILESTONE."
-
-          SYNC_BRANCH="sync/main-into-${MILESTONE}"
-          PR_TITLE="chore: sync main into $MILESTONE"
-          PR_BODY="Auto-generated PR to keep \`$MILESTONE\` in sync with \`main\`.
-
-          This PR was created because new commits were pushed to \`main\` that are not yet in \`$MILESTONE\`.
-
-          The sync branch is force-updated on each push to \`main\`, so this PR always reflects the latest state."
-
-          # Create sync branch from the milestone branch and merge main into it
-          git checkout -b "$SYNC_BRANCH" "origin/$MILESTONE"
-=======
       - name: Sync main into milestone1-completed
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
@@ -100,32 +55,10 @@ jobs:
           fi
 
           echo "Drift detected between $SOURCE and $TARGET."
->>>>>>> origin/main
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-<<<<<<< HEAD
-          if ! git merge origin/main --no-edit; then
-            echo "::warning::Merge conflicts detected. PR will contain conflict markers for manual resolution."
-            git add -A
-            git commit --no-edit -m "chore: merge main into $MILESTONE (conflicts need resolution)"
-          fi
-
-          git push --force-with-lease origin "$SYNC_BRANCH"
-
-          # Create PR if one doesn't already exist, otherwise just update the title/body
-          EXISTING_PR=$(gh pr list --base "$MILESTONE" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [ -n "${EXISTING_PR:-}" ]; then
-            echo "PR #$EXISTING_PR already exists. Sync branch has been updated."
-            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
-          else
-            gh pr create \
-              --base "$MILESTONE" \
-              --head "$SYNC_BRANCH" \
-              --title "$PR_TITLE" \
-              --body "$PR_BODY"
-=======
           git checkout -b "$TARGET" "origin/$TARGET"
 
           if git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"; then
@@ -239,5 +172,4 @@ jobs:
             else
               gh pr create --base "$TARGET" --head "$SYNC_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
             fi
->>>>>>> origin/main
           fi
