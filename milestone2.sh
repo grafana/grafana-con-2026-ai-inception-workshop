@@ -64,7 +64,7 @@ datasources:
     access: proxy
     isDefault: true
     jsonData:
-      apiUrl: https://cc-workshop-proxy.grafana.fun/bcapi/
+      baseURL: https://cc-workshop-proxy.grafana.fun/bcapi/
     secureJsonData:
       apiKey: "barcelona2026"
 EOF
