@@ -90,6 +90,7 @@ We want to make sure that next time claude runs it actually remembers the most i
 
 ```
 Store the essential information about the created datasource in CLAUDE.md file, including the plugin ID, API endpoints, authentication method, and supported query types.
+This information should help future sessions understand the plugin without re-reading all the source code.
 ```
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
@@ -173,7 +174,9 @@ Once done, verify the app is working:
 Still in the same **claude** session (no need to switch to plan mode), prompt:
 
 ```
-Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
+Create a second page in the bicing app that I can access via the navigation menu too.
+I should be able to see a map of all the stations with tooltip details.
+Use react map gl and openfreemap.
 ```
 
 > **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
@@ -189,7 +192,8 @@ Create a second page in the bicing app that I can access via the navigation menu
 Continue in the same **claude** session from Milestone 2.
 
 ```
-Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it. Use a synchronous non-streaming api.
+Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it.
+Use a synchronous non-streaming api.
 ```
 
 Once this is done, prompt Claude to:
