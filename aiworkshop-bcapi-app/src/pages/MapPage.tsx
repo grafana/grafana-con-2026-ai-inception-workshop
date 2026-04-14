@@ -2,11 +2,18 @@ import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { css } from '@emotion/css';
 import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
 import { DataSourcePicker, PluginPage, getDataSourceSrv } from '@grafana/runtime';
+<<<<<<< HEAD
 import { Alert, Button, Drawer, LoadingPlaceholder, useStyles2, useTheme2 } from '@grafana/ui';
 import MapGL, { Source, Layer, Popup, type MapLayerMouseEvent, type MapRef } from 'react-map-gl/maplibre';
 import type { GeoJSONSource } from 'maplibre-gl';
 import type { Point } from 'geojson';
 import { llm } from '@grafana/llm';
+=======
+import { Alert, LoadingPlaceholder, useStyles2, useTheme2 } from '@grafana/ui';
+import MapGL, { Source, Layer, Popup, type MapLayerMouseEvent, type MapRef } from 'react-map-gl/maplibre';
+import type { GeoJSONSource } from 'maplibre-gl';
+import type { Point } from 'geojson';
+>>>>>>> origin/milestone2-completed
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStations } from '../hooks/useStations';
 import { Station } from '../types';
@@ -22,6 +29,7 @@ const INITIAL_VIEW = {
   zoom: 13,
 };
 
+<<<<<<< HEAD
 async function askAboutStation(station: Station): Promise<string> {
   const isEnabled = await llm.enabled();
   if (!isEnabled) {
@@ -59,6 +67,8 @@ async function askAboutStation(station: Station): Promise<string> {
   return response.choices[0]?.message?.content ?? 'No response.';
 }
 
+=======
+>>>>>>> origin/milestone2-completed
 function MapPage() {
   const styles = useStyles2(getStyles);
   const theme = useTheme2();
@@ -68,10 +78,13 @@ function MapPage() {
     return list.length > 0 ? list[0].uid : null;
   });
   const [popupStation, setPopupStation] = useState<Station | null>(null);
+<<<<<<< HEAD
   const [drawerStation, setDrawerStation] = useState<Station | null>(null);
   const [llmReply, setLlmReply] = useState<string | null>(null);
   const [llmLoading, setLlmLoading] = useState(false);
   const [llmError, setLlmError] = useState<string | null>(null);
+=======
+>>>>>>> origin/milestone2-completed
 
   const { stations, loading, error } = useStations(dsUid);
 
@@ -100,6 +113,10 @@ function MapPage() {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // Cluster click — zoom into it
+>>>>>>> origin/milestone2-completed
     if (feature.properties?.cluster) {
       const map = mapRef.current?.getMap();
       if (!map) {
@@ -112,6 +129,7 @@ function MapPage() {
       });
       return;
     }
+<<<<<<< HEAD
 
     const id = feature.properties?.station_id;
     const station = stationMap.get(id);
@@ -139,6 +157,23 @@ function MapPage() {
     setLlmError(null);
     setLlmLoading(false);
   }, []);
+=======
+
+    // Station click — show popup
+    const id = feature.properties?.station_id;
+    const station = stationMap.get(id);
+    if (station) {
+      setPopupStation(station);
+    }
+  }, [stationMap]);
+
+  const onDsChange = (ds: DataSourceInstanceSettings) => {
+    setDsUid(ds.uid);
+    setPopupStation(null);
+  };
+
+  const primaryColor = theme.colors.primary.main;
+>>>>>>> origin/milestone2-completed
 
   const onDsChange = (ds: DataSourceInstanceSettings) => {
     setDsUid(ds.uid);
@@ -223,9 +258,14 @@ function MapPage() {
                   anchor="bottom"
                   onClose={() => setPopupStation(null)}
                   offset={10}
+<<<<<<< HEAD
                   maxWidth="320px"
                 >
                   <StationPopup station={popupStation} onAskAI={onAskAI} />
+=======
+                >
+                  <StationPopup station={popupStation} />
+>>>>>>> origin/milestone2-completed
                 </Popup>
               )}
             </MapGL>
@@ -252,7 +292,11 @@ function MapPage() {
   );
 }
 
+<<<<<<< HEAD
 function StationPopup({ station, onAskAI }: { station: Station; onAskAI: (s: Station) => void }) {
+=======
+function StationPopup({ station }: { station: Station }) {
+>>>>>>> origin/milestone2-completed
   const styles = useStyles2(getStyles);
   const { info, status } = station;
 
@@ -260,6 +304,7 @@ function StationPopup({ station, onAskAI }: { station: Station; onAskAI: (s: Sta
     <div className={styles.popup}>
       <strong>{info.name}</strong>
       <div>{info.address}</div>
+<<<<<<< HEAD
       <div>Capacity: {info.capacity} docks</div>
       {status && (
         <div>Bikes: {status.num_bikes_available} | Docks: {status.num_docks_available}</div>
@@ -301,11 +346,26 @@ function StationDrawerContent({ station, reply, loading, error: llmError }: Stat
           <h4 className={styles.drawerSectionTitle}>Live status</h4>
           <div>Status: {status.status}</div>
           <div>Bikes available: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
+=======
+      {info.post_code && <div>Post code: {info.post_code}</div>}
+      <div>Capacity: {info.capacity} docks</div>
+      <div>Type: {info.physical_configuration}</div>
+      <div>Charging: {info.is_charging_station ? 'Yes' : 'No'}</div>
+      {status && (
+        <>
+          <hr className={styles.popupDivider} />
+          <div>Status: {status.status}</div>
+          <div>Bikes: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
+>>>>>>> origin/milestone2-completed
           <div>Docks available: {status.num_docks_available}</div>
           {status.num_bikes_disabled > 0 && <div>Bikes disabled: {status.num_bikes_disabled}</div>}
           {status.num_docks_disabled > 0 && <div>Docks disabled: {status.num_docks_disabled}</div>}
           <div>Last reported: {new Date(status.last_reported * 1000).toLocaleString()}</div>
+<<<<<<< HEAD
         </div>
+=======
+        </>
+>>>>>>> origin/milestone2-completed
       )}
 
       <div className={styles.drawerSection}>
@@ -341,6 +401,7 @@ const getStyles = (theme: GrafanaTheme2) => ({
     lineHeight: 1.6,
     color: theme.colors.text.primary,
   }),
+<<<<<<< HEAD
   popupActions: css({
     marginTop: theme.spacing(1),
   }),
@@ -360,5 +421,11 @@ const getStyles = (theme: GrafanaTheme2) => ({
     whiteSpace: 'pre-wrap',
     lineHeight: 1.6,
     color: theme.colors.text.primary,
+=======
+  popupDivider: css({
+    margin: `${theme.spacing(0.5)} 0`,
+    border: 'none',
+    borderTop: `1px solid ${theme.colors.border.weak}`,
+>>>>>>> origin/milestone2-completed
   }),
 });
