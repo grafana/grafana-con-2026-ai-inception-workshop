@@ -84,7 +84,10 @@ npm run server
 
 Awesome! You now have an actually working data source.
 
-> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes.
+> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes:
+> ```
+> Switch to the milestone1-completed branch and discard my local changes
+> ```
 
 ### Storing Knowledge
 We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
@@ -179,7 +182,10 @@ Once done, verify the map is working:
 - Refresh your Grafana instance
 - Navigate to the Map page via the navigation menu — you should see stations plotted on a map with tooltips on hover.
 
-> **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes.
+> **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes:
+> ```
+> Switch to the milestone2-completed branch and discard my local changes
+> ```
 
 <a id="milestone-3"></a>
 ## Milestone 3 - Advanced Features
