@@ -30,12 +30,6 @@ if [ "$IS_LOCAL" = true ]; then
      exit 0
    fi
  fi
-else
- # Codespaces: original check
- if [ -f "$SETTINGS_FILE" ] && [ -f ~/.claude.json ]; then
-   echo "Setup has already been run. To re-run, remove ~/.claude/ and ~/.claude.json first."
-   exit 0
- fi
 fi
 
 # Local mode: confirm with user
