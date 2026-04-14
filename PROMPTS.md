@@ -202,10 +202,12 @@ Use a synchronous non-streaming api.
 Once this is done, prompt Claude to:
 
 ```
-Make sure the grafana-llm-app is automatically installed in my app project
+Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
+Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL.
+Use ${ANTHROPIC_API_KEY} as the anthropicKey in secureJsonData (it will be injected from the .env file).
 ```
 
-Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed. Click on it, go to "Configuration", and set up OpenAI or Anthropic API configuration. Ask us for a demo key you can use.
+Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
 
 You can now keep prompting Claude to modify the app views — change the map behavior, tweak what happens when a station is clicked, or whatever you wish.
 
