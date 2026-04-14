@@ -24,4 +24,4 @@ apps:
           base: claude-sonnet-4-20250514
           large: claude-sonnet-4-20250514
     secureJsonData:
-      anthropicKey: "${ANTHROPIC_API_KEY}"
+      anthropicKey: "placeholder"
