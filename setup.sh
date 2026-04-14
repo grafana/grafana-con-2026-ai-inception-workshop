@@ -52,6 +52,7 @@ if ! command -v claude &> /dev/null; then
    exit 1
  else
    echo "Installing Claude Code..."
+   export TERM_PROGRAM=xterm
    curl -fsSL https://claude.ai/install.sh | bash
    # Reload to get claude in PATH
    export PATH="$HOME/.claude/local/bin:$PATH"
