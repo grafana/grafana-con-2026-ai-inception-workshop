@@ -3,6 +3,13 @@ set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_DIR="aiworkshop-bcapi-app"
+
+# Fail if run from inside the datasource plugin directory
+if [[ "$(pwd)" == *"aiworkshop-bcapi-datasource"* ]]; then
+  echo "ERROR: Do not run this script from inside the datasource plugin directory."
+  echo "Please run from the workshop root: $PROJECT_DIR"
+  exit 1
+fi
 DS_DIR="aiworkshop-bcapi-datasource"
 DS_PLUGIN_ID="aiworkshop-bcapi-datasource"
 
