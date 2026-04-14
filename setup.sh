@@ -205,7 +205,15 @@ else
  echo "Claude setup is done"
 fi
 
-bash "$PROJECT_DIR/milestone1.sh"
+if [ -d "$PROJECT_DIR/aiworkshop-bcapi-app" ]; then
+  echo ">>> Detected app plugin — running milestone 2 setup..."
+  bash "$PROJECT_DIR/milestone2.sh"
+elif [ -d "$PROJECT_DIR/aiworkshop-bcapi-datasource" ]; then
+  echo ">>> Detected datasource plugin — running milestone 1 setup..."
+  bash "$PROJECT_DIR/milestone1.sh"
+else
+  bash "$PROJECT_DIR/milestone1.sh"
+fi
 
 echo ""
 echo "============================================"
