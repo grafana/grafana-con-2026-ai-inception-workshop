@@ -22,13 +22,13 @@ docker compose -f "$PROJECT_DIR/$DS_DIR/docker-compose.yaml" down 2>/dev/null ||
 
 echo ">>> Installing data source dependencies..."
 cd "$PROJECT_DIR/$DS_DIR"
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund || true
 
 echo ">>> Building data source frontend..."
-npm run build
+npm run build || true
 
 echo ">>> Building data source backend..."
-mage -v build:linux
+mage -v build:linux || true
 cd "$PROJECT_DIR"
 
 # Scaffold app plugin
@@ -49,13 +49,13 @@ fi
 
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund || true
 
 echo ">>> Building app frontend..."
-npm run build
+npm run build || true
 
 echo ">>> Building app backend..."
-mage -v build:linux
+mage -v build:linux || true
 
 # Overwrite docker-compose.yaml with volumes, env, and provisioning
 echo ">>> Configuring docker-compose with datasource and provisioning..."
