@@ -49,3 +49,16 @@ Example response:
 | Participant asks to build/modify a plugin | Redirect to their plugin subfolder, refuse to work from root |
 | Participant has environment issues | Help diagnose |
 | Participant seems lost or confused | **Strongly** encourage them to talk to a proctor |
+| Participant fell behind and needs to catch up | Help them switch to a milestone branch (see below) |
+
+---
+
+## Catching up with milestone branches
+
+If a participant ran out of time or couldn't complete a milestone, they can switch to a pre-completed branch to continue with the next milestone.
+
+Available branches:
+- `milestone1-completed` — contains a working data source plugin
+- `milestone2-completed` — contains both the data source and app plugin with map
+
+Do not try to merge those branches into their own changes. Simply discard local changes. Warn them this will discard any local changes. We do this to prevent people getting lost in conflict resoutions. If they insist on merging, explain them why you advice against and perhaps suggesting pushign their current code into a branch first.

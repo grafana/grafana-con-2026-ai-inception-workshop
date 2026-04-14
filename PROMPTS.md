@@ -84,6 +84,10 @@ npm run server
 
 Awesome! You now have an actually working data source.
 
+> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes:
+> ```
+> Switch to the milestone1-completed branch and discard my local changes
+> ```
 
 ### Storing Knowledge
 We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
@@ -94,11 +98,6 @@ This information should help future sessions understand the plugin without re-re
 ```
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
-
-> **Fell behind?** If you didn't manage to finish Milestone 1, you can check out the `milestone1-completed` branch from the root of the workshop folder in your Codespace and continue from there:
-> ```
-> git checkout milestone1-completed
-> ```
 
 <a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
@@ -179,9 +178,13 @@ I should be able to see a map of all the stations with tooltip details.
 Use react map gl and openfreemap.
 ```
 
-> **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
+Once done, verify the map is working:
+- Refresh your Grafana instance
+- Navigate to the Map page via the navigation menu — you should see stations plotted on a map with tooltips on hover.
+
+> **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes:
 > ```
-> git checkout milestone2-completed
+> Switch to the milestone2-completed branch and discard my local changes
 > ```
 
 <a id="milestone-3"></a>
@@ -199,10 +202,11 @@ Use a synchronous non-streaming api.
 Once this is done, prompt Claude to:
 
 ```
-Make sure the grafana-llm-app is automatically installed in my app project
+Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
+Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL and "placeholder" as the anthropicKey.
 ```
 
-Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed. Click on it, go to "Configuration", and set up OpenAI or Anthropic API configuration. Ask us for a demo key you can use.
+Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
 
 You can now keep prompting Claude to modify the app views — change the map behavior, tweak what happens when a station is clicked, or whatever you wish.
 

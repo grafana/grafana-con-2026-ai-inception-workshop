@@ -19,6 +19,9 @@
           "*.md": "vscode.markdown.preview.editor"
         },
         "claudeCode.hideOnboarding": true,
+        "extensions.allowed": {
+          "anthropic.claude-code": false
+        }
       }
     }
   },
@@ -32,6 +35,6 @@
   "otherPortsAttributes": {
     "onAutoForward": "silent"
   },
-  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash && echo 'alias claude=\"TERM_PROGRAM=xterm claude\"' >> ~/.bashrc",
-  "postAttachCommand": "clear && echo '🚴 GrafanaCon 2026 - AI Inception Workshop' && echo '' && echo 'Run: bash setup.sh' && echo ''"
+  "postCreateCommand": "",
+  "postAttachCommand": ""
 }

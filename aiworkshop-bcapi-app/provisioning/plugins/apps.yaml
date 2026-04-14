@@ -15,5 +15,13 @@ apps:
     org_name: 'aiworkshop'
     disabled: false
     jsonData:
-      openAI: {}
-    secureJsonData: {}
+      provider: "anthropic"
+      anthropic:
+        url: "https://cc-workshop-proxy.grafana.fun"
+      models:
+        default: base
+        mapping:
+          base: claude-sonnet-4-20250514
+          large: claude-sonnet-4-20250514
+    secureJsonData:
+      anthropicKey: "placeholder"

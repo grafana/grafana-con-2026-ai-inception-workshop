@@ -28,7 +28,7 @@ lib-cov
 coverage
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
-dist/
+# dist/ is tracked in git for this project
 artifacts/
 work/
 ci/
