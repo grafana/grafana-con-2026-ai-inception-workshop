@@ -75,7 +75,13 @@ jobs:
 
             git checkout -B "$TARGET" "origin/$TARGET"
 
-            if git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"; then
+            # For pairs where target is a superset of source, favour target on conflicts
+            MERGE_OPTS=""
+            if [ "$SOURCE:$TARGET" = "milestone2-completed:milestone3-completed" ]; then
+              MERGE_OPTS="-X ours"
+            fi
+
+            if git merge "origin/$SOURCE" $MERGE_OPTS --no-edit -m "chore: sync $SOURCE into $TARGET"; then
               echo "Merge succeeded. Pushing directly."
               git push origin "$TARGET"
             else
