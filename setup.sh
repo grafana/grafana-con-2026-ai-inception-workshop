@@ -215,6 +215,7 @@ else
   bash "$PROJECT_DIR/milestone1.sh"
 fi
 
+
 echo ""
 echo "============================================"
 echo "  Setup complete!"
