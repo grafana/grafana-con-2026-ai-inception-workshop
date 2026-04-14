@@ -34,7 +34,7 @@ cd "$PROJECT_DIR"
 # Scaffold app plugin
 if [ ! -d "$APP_DIR" ]; then
   echo ">>> Scaffolding app plugin..."
-  npx -y @grafana/create-plugin@latest --plugin-type=app --plugin-name=bcapi --org-name=aiworkshop
+  npx -y @grafana/create-plugin@latest --plugin-type=app --plugin-name=bcapi --org-name=aiworkshop --no-backend
 
   echo ">>> Pinning Grafana dependencies to 12.4.2..."
   cd "$PROJECT_DIR/$APP_DIR"
