@@ -91,3 +91,7 @@ Add a quick way to find specific stations without scrolling through the full lis
 ```
 Add a search bar at the top of the station list page that filters stations in real time as the user types. It should match against station name, address, and district. Also add filter toggles to show only stations that have bikes available, only e-bike stations, or only stations that are currently in service.
 ```
+
+## Hot reload plugins
+
+Can you get the app and data source plugins to reload on changes?
