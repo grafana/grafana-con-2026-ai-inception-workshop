@@ -58,10 +58,13 @@ npm run build || true
 echo ">>> Building app backend..."
 mage -v build:linux || true
 
-# Overwrite docker-compose.yaml with volumes, env, and provisioning
-echo ">>> Configuring docker-compose with datasource and provisioning..."
+# Configure docker-compose and provisioning (skip if already set up, e.g. milestone3 branch)
 COMPOSE_FILE="$PROJECT_DIR/$APP_DIR/docker-compose.yaml"
-cat > "$COMPOSE_FILE" <<EOF
+if grep -q "GF_INSTALL_PLUGINS" "$COMPOSE_FILE" 2>/dev/null; then
+  echo ">>> docker-compose.yaml already configured, skipping overwrite."
+else
+  echo ">>> Configuring docker-compose with datasource and provisioning..."
+  cat > "$COMPOSE_FILE" <<EOF
 services:
   grafana:
     extends:
@@ -76,12 +79,16 @@ services:
     environment:
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: $DS_PLUGIN_ID,aiworkshop-bcapi-app
 EOF
+fi
 
-# Provision the data source
-echo ">>> Provisioning data source..."
+# Provision the data source (skip if already exists)
 PROVISIONING_DIR="$PROJECT_DIR/$APP_DIR/provisioning/datasources"
-mkdir -p "$PROVISIONING_DIR"
-cat > "$PROVISIONING_DIR/bcapi.yaml" <<EOF
+if [ -f "$PROVISIONING_DIR/bcapi.yaml" ]; then
+  echo ">>> Datasource provisioning already exists, skipping."
+else
+  echo ">>> Provisioning data source..."
+  mkdir -p "$PROVISIONING_DIR"
+  cat > "$PROVISIONING_DIR/bcapi.yaml" <<EOF
 apiVersion: 1
 datasources:
   - name: Barcelona Bicing
@@ -93,6 +100,7 @@ datasources:
     secureJsonData:
       apiKey: "barcelona2026"
 EOF
+fi
 
 echo ""
 echo "============================================"
