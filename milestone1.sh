@@ -21,6 +21,7 @@ fi
 
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PLUGIN_DIR"
+docker compose down || true
 npm install --no-audit --no-fund || true
 
 echo ">>> Building backend..."
