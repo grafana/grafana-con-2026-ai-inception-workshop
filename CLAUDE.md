@@ -60,5 +60,6 @@ If a participant ran out of time or couldn't complete a milestone, they can swit
 Available branches:
 - `milestone1-completed` — contains a working data source plugin
 - `milestone2-completed` — contains both the data source and app plugin with map
+- `milestone3-completed` — contains the full app with LLM-powered station insights
 
-Do not try to merge those branches into their own changes. Simply discard local changes. Warn them this will discard any local changes. We do this to prevent people getting lost in conflict resoutions. If they insist on merging, explain them why you advice against and perhaps suggesting pushign their current code into a branch first.
+Do not try to merge those branches into their own changes. Simply discard local changes. Warn them this will discard any local changes. We do this to prevent people getting lost in conflict resolutions. If they insist on merging, explain why you advise against it and perhaps suggest pushing their current code into a branch first.

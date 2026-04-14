@@ -1,5 +1,7 @@
 # Additional Challenges
 
+> **Note:** Challenges that use `@grafana/llm` (Landmark-Aware Station Chat, Station Recommendations via LLM, Natural Language Queries) require **Milestone 3** to be completed first — the LLM plugin must be installed and provisioned. If you haven't done Milestone 3 yet, either complete it first or switch to the `milestone3-completed` branch.
+
 ## E2E Testing with @grafana/plugin-e2e
 
 Your scaffolded plugins already come with `@grafana/plugin-e2e`, Playwright, and agent instructions in `.config/AGENTS/e2e-testing.md` that teach Claude how to write idiomatic e2e tests.
