@@ -19,6 +19,9 @@
           "*.md": "vscode.markdown.preview.editor"
         },
         "claudeCode.hideOnboarding": true,
+        "extensions.allowed": {
+          "anthropic.claude-code": false
+        }
       }
     }
   },
