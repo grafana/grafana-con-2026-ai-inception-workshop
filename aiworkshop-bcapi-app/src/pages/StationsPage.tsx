@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/css';
 import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
 import { DataSourcePicker, PluginPage, getDataSourceSrv } from '@grafana/runtime';
@@ -11,14 +11,10 @@ const DS_PLUGIN_ID = 'aiworkshop-bcapi-datasource';
 
 function StationsPage() {
   const styles = useStyles2(getStyles);
-  const [dsUid, setDsUid] = useState<string | null>(null);
-
-  useEffect(() => {
+  const [dsUid, setDsUid] = useState<string | null>(() => {
     const list = getDataSourceSrv().getList({ pluginId: DS_PLUGIN_ID });
-    if (list.length > 0) {
-      setDsUid(list[0].uid);
-    }
-  }, []);
+    return list.length > 0 ? list[0].uid : null;
+  });
 
   const { stations, loading, error } = useStations(dsUid);
 

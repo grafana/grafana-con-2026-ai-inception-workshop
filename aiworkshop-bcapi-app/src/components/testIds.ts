@@ -8,4 +8,7 @@ export const testIds = {
     container: 'data-testid stations-container',
     stationItem: 'data-testid station-item',
   },
+  mapPage: {
+    container: 'data-testid map-container',
+  },
 };

@@ -1,5 +1,3 @@
-import { DataSourceRef } from '@grafana/data';
-
 export interface StationInfo {
   station_id: string;
   name: string;
@@ -31,4 +29,4 @@ export interface Station {
   status?: StationStatus;
 }
 
-export type DsRef = DataSourceRef | string | null;
+export type DsRef = string | null;
