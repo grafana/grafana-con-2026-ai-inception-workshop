@@ -11,6 +11,7 @@ Make sure you have the following installed:
 - **jq**
 - **curl**
 - **Docker** — [Install Docker](https://docs.docker.com/get-docker/)
+- **mage** — installed automatically by `setup.sh` via `go install`, but if that fails you can install it manually: `go install github.com/magefile/mage@latest`
 
 Verify Docker is working:
 
