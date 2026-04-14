@@ -203,7 +203,8 @@ Once this is done, prompt Claude to:
 
 ```
 Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
-Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL and "placeholder" as the anthropicKey.
+Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL.
+Use ${ANTHROPIC_API_KEY} as the anthropicKey in secureJsonData and pass ANTHROPIC_API_KEY through docker-compose environment.
 ```
 
 Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
