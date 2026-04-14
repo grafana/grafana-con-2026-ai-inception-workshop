@@ -59,7 +59,6 @@ if ! command -v claude &> /dev/null; then
  else
    echo "Installing Claude Code..."
    curl -fsSL https://claude.ai/install.sh | bash
-   echo 'alias claude="TERM_PROGRAM=xterm claude"' >> ~/.bashrc
    # Reload to get claude in PATH
    export PATH="$HOME/.claude/local/bin:$PATH"
  fi
