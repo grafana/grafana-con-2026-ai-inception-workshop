@@ -1,394 +1,202 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { css } from '@emotion/css';
-import { GrafanaTheme2 } from '@grafana/data';
-import { PluginPage } from '@grafana/runtime';
-import { Alert, Button, Combobox, type ComboboxOption, Modal, Spinner, useStyles2 } from '@grafana/ui';
-import { Map as MapGL, Source, Layer, Popup, NavigationControl, type MapRef, type MapMouseEvent, type LayerProps } from 'react-map-gl/maplibre';
-import type { GeoJSON } from 'geojson';
+import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
+import { DataSourcePicker, PluginPage, getDataSourceSrv } from '@grafana/runtime';
+import { Alert, LoadingPlaceholder, useStyles2, useTheme2 } from '@grafana/ui';
+import MapGL, { Source, Layer, Popup, type MapLayerMouseEvent, type MapRef } from 'react-map-gl/maplibre';
+import type { GeoJSONSource } from 'maplibre-gl';
+import type { Point } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { llm } from '@grafana/llm';
-import { StationInfo, StationStatus } from '../types';
-import { getDatasourceInstances, fetchAllStationInfo, fetchAllStationStatus } from '../utils/datasource';
+import { useStations } from '../hooks/useStations';
+import { Station } from '../types';
 import { testIds } from '../components/testIds';
 
-interface MapStation extends StationInfo {
-  status?: StationStatus;
-}
+const DS_PLUGIN_ID = 'aiworkshop-bcapi-datasource';
+const OPENFREEMAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+const SOURCE_ID = 'stations';
 
-type MapState = {
-  stations: MapStation[];
-  loading: boolean;
-  error: string | null;
+const INITIAL_VIEW = {
+  longitude: 2.1734,
+  latitude: 41.3851,
+  zoom: 13,
 };
-
-type MapAction =
-  | { type: 'fetch' }
-  | { type: 'success'; stations: MapStation[] }
-  | { type: 'error'; message: string };
-
-function mapReducer(state: MapState, action: MapAction): MapState {
-  switch (action.type) {
-    case 'fetch':
-      return { stations: [], loading: true, error: null };
-    case 'success':
-      return { stations: action.stations, loading: false, error: null };
-    case 'error':
-      return { stations: [], loading: false, error: action.message };
-  }
-}
-
-function useMapStations(dsUid: string | undefined) {
-  const [state, dispatch] = useReducer(mapReducer, { stations: [], loading: false, error: null });
-
-  useEffect(() => {
-    if (!dsUid) {
-      return;
-    }
-    let cancelled = false;
-    dispatch({ type: 'fetch' });
-    Promise.all([fetchAllStationInfo(dsUid), fetchAllStationStatus(dsUid)])
-      .then(([infoList, statusList]) => {
-        if (cancelled) {
-          return;
-        }
-        const statusMap = new window.Map<string, StationStatus>();
-        for (const s of statusList) {
-          statusMap.set(s.station_id, s);
-        }
-        const merged = infoList.map((info) => ({ ...info, status: statusMap.get(info.station_id) }));
-        dispatch({ type: 'success', stations: merged });
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          dispatch({ type: 'error', message: err.message ?? 'Failed to fetch stations' });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [dsUid]);
-
-  return state;
-}
-
-function toGeoJSON(stations: MapStation[]): GeoJSON {
-  return {
-    type: 'FeatureCollection',
-    features: stations.map((s) => ({
-      type: 'Feature' as const,
-      geometry: { type: 'Point' as const, coordinates: [s.longitude, s.latitude] },
-      properties: {
-        station_id: s.station_id,
-        name: s.name,
-        address: s.address,
-        post_code: s.post_code,
-        capacity: s.capacity,
-        physical_configuration: s.physical_configuration,
-        is_charging_station: s.is_charging_station,
-        num_bikes_available: s.status?.num_bikes_available ?? 0,
-        mechanical: s.status?.mechanical ?? 0,
-        ebike: s.status?.ebike ?? 0,
-        num_docks_available: s.status?.num_docks_available ?? 0,
-        station_status: s.status?.status ?? '',
-        last_reported: s.status?.last_reported ?? 0,
-      },
-    })),
-  };
-}
-
-const CLUSTER_LAYER: LayerProps = {
-  id: 'clusters',
-  type: 'circle',
-  filter: ['has', 'point_count'],
-  paint: {
-    'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 20, '#f1f075', 50, '#f28cb1'],
-    'circle-radius': ['step', ['get', 'point_count'], 18, 20, 24, 50, 30],
-  },
-};
-
-const CLUSTER_COUNT_LAYER: LayerProps = {
-  id: 'cluster-count',
-  type: 'symbol',
-  filter: ['has', 'point_count'],
-  layout: {
-    'text-field': '{point_count_abbreviated}',
-    'text-size': 13,
-  },
-  paint: {
-    'text-color': '#000',
-  },
-};
-
-const STATION_LAYER: LayerProps = {
-  id: 'unclustered-point',
-  type: 'circle',
-  filter: ['!', ['has', 'point_count']],
-  paint: {
-    'circle-color': '#11b4da',
-    'circle-radius': 7,
-    'circle-stroke-width': 2,
-    'circle-stroke-color': '#fff',
-  },
-};
-
-const BARCELONA_CENTER = { longitude: 2.1734, latitude: 41.3851 };
-
-function useAskAI() {
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-  const [aiStationName, setAiStationName] = useState<string>('');
-
-  const askAI = useCallback(async (properties: Record<string, unknown>) => {
-    const stationName = String(properties.name ?? 'Unknown');
-    setAiStationName(stationName);
-    setAiLoading(true);
-    setAiError(null);
-    setAiResponse(null);
-    try {
-      const isEnabled = await llm.enabled();
-      if (!isEnabled) {
-        setAiError('Grafana LLM plugin is not enabled. Please install and configure the grafana-llm-app plugin.');
-        return;
-      }
-
-      const response = await llm.chatCompletions({
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a helpful assistant that provides concise information about Bicing bike-sharing stations in Barcelona. ' +
-              'Keep your answers short and practical (3-5 sentences max).',
-          },
-          {
-            role: 'user',
-            content:
-              `Tell me about this Bicing station and the requirements to use it:\n` +
-              `- Name: ${stationName}\n` +
-              `- Address: ${String(properties.address ?? 'Unknown')}\n` +
-              `- Capacity: ${String(properties.capacity ?? 'Unknown')} docks\n` +
-              `- Type: ${String(properties.physical_configuration ?? 'Unknown')}\n` +
-              `- Available bikes: ${String(properties.num_bikes_available ?? 0)} (${String(properties.mechanical ?? 0)} mechanical, ${String(properties.ebike ?? 0)} e-bike)\n` +
-              `- Available docks: ${String(properties.num_docks_available ?? 0)}\n` +
-              `- Charging station: ${properties.is_charging_station ? 'Yes' : 'No'}`,
-          },
-        ],
-      });
-
-      const content = response.choices?.[0]?.message?.content;
-      if (content) {
-        setAiResponse(content);
-      } else {
-        setAiError('No response from LLM.');
-      }
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : 'Failed to get AI response.');
-    } finally {
-      setAiLoading(false);
-    }
-  }, []);
-
-  const dismiss = useCallback(() => {
-    setAiResponse(null);
-    setAiError(null);
-    setAiLoading(false);
-    setAiStationName('');
-  }, []);
-
-  const isOpen = aiLoading || aiResponse !== null || aiError !== null;
-
-  return { aiResponse, aiLoading, aiError, aiStationName, isOpen, askAI, dismiss };
-}
 
 function MapPage() {
-  const s = useStyles2(getStyles);
+  const styles = useStyles2(getStyles);
+  const theme = useTheme2();
   const mapRef = useRef<MapRef>(null);
+  const [dsUid, setDsUid] = useState<string | null>(() => {
+    const list = getDataSourceSrv().getList({ pluginId: DS_PLUGIN_ID });
+    return list.length > 0 ? list[0].uid : null;
+  });
+  const [popupStation, setPopupStation] = useState<Station | null>(null);
 
-  const dsOptions = useMemo(() => {
-    return getDatasourceInstances().map((ds) => ({ label: ds.name, value: ds.uid }));
-  }, []);
+  const { stations, loading, error } = useStations(dsUid);
 
-  const [selectedDs, setSelectedDs] = useState<string | null>(dsOptions[0]?.value ?? null);
-  const { stations, loading, error } = useMapStations(selectedDs ?? undefined);
+  const geojson = useMemo(() => ({
+    type: 'FeatureCollection' as const,
+    features: stations.map((s) => ({
+      type: 'Feature' as const,
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [s.info.longitude, s.info.latitude],
+      },
+      properties: {
+        station_id: s.info.station_id,
+      },
+    })),
+  }), [stations]);
 
-  const geojson = useMemo(() => toGeoJSON(stations), [stations]);
+  const stationMap = useMemo(
+    () => new globalThis.Map(stations.map((s): [string, Station] => [s.info.station_id, s])),
+    [stations]
+  );
 
-  const [popupInfo, setPopupInfo] = useState<{
-    longitude: number;
-    latitude: number;
-    properties: Record<string, unknown>;
-  } | null>(null);
+  const onClick = useCallback((e: MapLayerMouseEvent) => {
+    const feature = e.features?.[0];
+    if (!feature) {
+      return;
+    }
 
-  const ai = useAskAI();
-
-  const handleDsChange = useCallback((option: ComboboxOption<string>) => {
-    setSelectedDs(option.value);
-    setPopupInfo(null);
-  }, []);
-
-  const handleClick = useCallback(
-    (e: MapMouseEvent) => {
+    // Cluster click — zoom into it
+    if (feature.properties?.cluster) {
       const map = mapRef.current?.getMap();
       if (!map) {
         return;
       }
-
-      const clusterFeatures = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-      if (clusterFeatures.length > 0) {
-        const feature = clusterFeatures[0];
-        const clusterId = feature.properties?.cluster_id;
-        const source = map.getSource('stations') as unknown as { getClusterExpansionZoom: (id: number, cb: (err: unknown, zoom: number) => void) => void };
-        source.getClusterExpansionZoom(clusterId, (err: unknown, zoom: number) => {
-          if (err || !feature.geometry || feature.geometry.type !== 'Point') {
-            return;
-          }
-          map.easeTo({
-            center: feature.geometry.coordinates as [number, number],
-            zoom,
-          });
-        });
-        return;
-      }
-
-      const pointFeatures = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
-      if (pointFeatures.length > 0) {
-        const feature = pointFeatures[0];
-        if (feature.geometry.type === 'Point') {
-          setPopupInfo({
-            longitude: feature.geometry.coordinates[0],
-            latitude: feature.geometry.coordinates[1],
-            properties: feature.properties ?? {},
-          });
-        }
-      }
-    },
-    []
-  );
-
-  const handleMouseEnter = useCallback(() => {
-    const map = mapRef.current?.getMap();
-    if (map) {
-      map.getCanvas().style.cursor = 'pointer';
+      const source = map.getSource(SOURCE_ID) as GeoJSONSource;
+      source.getClusterExpansionZoom(feature.properties.cluster_id).then((zoom: number) => {
+        const geom = feature.geometry as Point;
+        map.easeTo({ center: [geom.coordinates[0], geom.coordinates[1]], zoom });
+      });
+      return;
     }
-  }, []);
 
-  const handleMouseLeave = useCallback(() => {
-    const map = mapRef.current?.getMap();
-    if (map) {
-      map.getCanvas().style.cursor = '';
+    // Station click — show popup
+    const id = feature.properties?.station_id;
+    const station = stationMap.get(id);
+    if (station) {
+      setPopupStation(station);
     }
-  }, []);
+  }, [stationMap]);
+
+  const onDsChange = (ds: DataSourceInstanceSettings) => {
+    setDsUid(ds.uid);
+    setPopupStation(null);
+  };
+
+  const primaryColor = theme.colors.primary.main;
 
   return (
     <PluginPage>
-      <div data-testid={testIds.map.container}>
-        <div className={s.dsSelector}>
-          <Combobox
-            data-testid={testIds.map.datasourceSelect}
-            options={dsOptions}
-            value={selectedDs}
-            onChange={handleDsChange}
-            placeholder="Select a datasource"
-            width={40}
+      <div data-testid={testIds.mapPage.container} className={styles.wrapper}>
+        <div className={styles.pickerRow}>
+          <DataSourcePicker
+            pluginId={DS_PLUGIN_ID}
+            current={dsUid}
+            onChange={onDsChange}
           />
         </div>
 
-        {error && <Alert severity="error" title="Error loading stations">{error}</Alert>}
+        {loading && <LoadingPlaceholder text="Loading stations..." />}
+        {error && <Alert title="Error loading stations" severity="error">{error}</Alert>}
 
-        {loading && (
-          <div className={s.centered}>
-            <Spinner size="xl" />
-          </div>
-        )}
-
-        {!loading && !error && !selectedDs && (
-          <Alert severity="warning" title="No datasource">
-            No aiworkshop-bcapi-datasource instance found. Please configure one first.
-          </Alert>
-        )}
-
-        {!loading && !error && selectedDs && (
-          <div className={s.mapContainer}>
+        {!loading && !error && stations.length > 0 && (
+          <div className={styles.mapContainer}>
             <MapGL
               ref={mapRef}
-              initialViewState={{ ...BARCELONA_CENTER, zoom: 13 }}
+              initialViewState={INITIAL_VIEW}
               style={{ width: '100%', height: '100%' }}
-              mapStyle="https://tiles.openfreemap.org/styles/liberty"
-              onClick={handleClick}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              mapStyle={OPENFREEMAP_STYLE}
               interactiveLayerIds={['clusters', 'unclustered-point']}
+              onClick={onClick}
+              cursor="pointer"
             >
-              <NavigationControl position="top-right" />
-              <Source id="stations" type="geojson" data={geojson} cluster clusterMaxZoom={14} clusterRadius={50}>
-                <Layer {...CLUSTER_LAYER} />
-                <Layer {...CLUSTER_COUNT_LAYER} />
-                <Layer {...STATION_LAYER} />
+              <Source
+                id={SOURCE_ID}
+                type="geojson"
+                data={geojson}
+                cluster
+                clusterMaxZoom={14}
+                clusterRadius={50}
+              >
+                <Layer
+                  id="clusters"
+                  type="circle"
+                  filter={['has', 'point_count']}
+                  paint={{
+                    'circle-color': primaryColor,
+                    'circle-radius': ['step', ['get', 'point_count'], 18, 20, 24, 50, 30],
+                    'circle-opacity': 0.85,
+                  }}
+                />
+                <Layer
+                  id="cluster-count"
+                  type="symbol"
+                  filter={['has', 'point_count']}
+                  layout={{
+                    'text-field': '{point_count_abbreviated}',
+                    'text-size': 13,
+                  }}
+                  paint={{
+                    'text-color': '#ffffff',
+                  }}
+                />
+                <Layer
+                  id="unclustered-point"
+                  type="circle"
+                  filter={['!', ['has', 'point_count']]}
+                  paint={{
+                    'circle-color': primaryColor,
+                    'circle-radius': 6,
+                    'circle-stroke-width': 2,
+                    'circle-stroke-color': '#ffffff',
+                  }}
+                />
               </Source>
-              {popupInfo && (
+
+              {popupStation && (
                 <Popup
-                  longitude={popupInfo.longitude}
-                  latitude={popupInfo.latitude}
-                  anchor="top"
-                  onClose={() => setPopupInfo(null)}
-                  maxWidth="320px"
+                  longitude={popupStation.info.longitude}
+                  latitude={popupStation.info.latitude}
+                  anchor="bottom"
+                  onClose={() => setPopupStation(null)}
+                  offset={10}
                 >
-                  <StationPopup properties={popupInfo.properties} onAskAI={ai.askAI} />
+                  <StationPopup station={popupStation} />
                 </Popup>
               )}
             </MapGL>
           </div>
-        )}
-
-        {ai.isOpen && (
-          <Modal title={`AI Info — ${ai.aiStationName}`} isOpen onDismiss={ai.dismiss}>
-            {ai.aiLoading && (
-              <div className={s.modalLoading}>
-                <Spinner /> Asking AI...
-              </div>
-            )}
-            {ai.aiError && <Alert severity="error" title="AI Error">{ai.aiError}</Alert>}
-            {ai.aiResponse && <p style={{ whiteSpace: 'pre-wrap' }}>{ai.aiResponse}</p>}
-          </Modal>
         )}
       </div>
     </PluginPage>
   );
 }
 
-function StationPopup({ properties, onAskAI }: { properties: Record<string, unknown>; onAskAI: (properties: Record<string, unknown>) => void }) {
-  const s = useStyles2(getPopupStyles);
-  const p = properties;
-  const lastReported = Number(p.last_reported) || 0;
+function StationPopup({ station }: { station: Station }) {
+  const styles = useStyles2(getStyles);
+  const { info, status } = station;
 
   return (
-    <div className={s.popup}>
-      <div className={s.title}>{String(p.name ?? '')}</div>
-      <div className={s.section}>
-        <div>{String(p.address ?? '')}</div>
-        {Boolean(p.post_code) && <div>Post code: {String(p.post_code)}</div>}
-        <div>Capacity: {String(p.capacity ?? '')} docks</div>
-        <div>Type: {String(p.physical_configuration ?? '')}</div>
-        {Boolean(p.is_charging_station) && <div>Charging station</div>}
-      </div>
-      {Boolean(p.station_status) && (
-        <div className={s.section}>
-          <div className={s.subtitle}>Real-time status</div>
-          <div>
-            Bikes: {String(p.num_bikes_available)} ({String(p.mechanical)} mechanical, {String(p.ebike)} e-bike)
-          </div>
-          <div>Docks available: {String(p.num_docks_available)}</div>
-          <div>Status: {String(p.station_status)}</div>
-          {lastReported > 0 && (
-            <div>Last reported: {new Date(lastReported).toLocaleString()}</div>
-          )}
-        </div>
+    <div className={styles.popup}>
+      <strong>{info.name}</strong>
+      <div>{info.address}</div>
+      {info.post_code && <div>Post code: {info.post_code}</div>}
+      <div>Capacity: {info.capacity} docks</div>
+      <div>Type: {info.physical_configuration}</div>
+      <div>Charging: {info.is_charging_station ? 'Yes' : 'No'}</div>
+      {status && (
+        <>
+          <hr className={styles.popupDivider} />
+          <div>Status: {status.status}</div>
+          <div>Bikes: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
+          <div>Docks available: {status.num_docks_available}</div>
+          {status.num_bikes_disabled > 0 && <div>Bikes disabled: {status.num_bikes_disabled}</div>}
+          {status.num_docks_disabled > 0 && <div>Docks disabled: {status.num_docks_disabled}</div>}
+          <div>Last reported: {new Date(status.last_reported * 1000).toLocaleString()}</div>
+        </>
       )}
-      <div className={s.section}>
-        <Button size="sm" variant="primary" onClick={() => onAskAI(p)}>
-          Ask AI about this station
-        </Button>
-      </div>
     </div>
   );
 }
@@ -396,47 +204,29 @@ function StationPopup({ properties, onAskAI }: { properties: Record<string, unkn
 export default MapPage;
 
 const getStyles = (theme: GrafanaTheme2) => ({
-  dsSelector: css({
-    marginBottom: theme.spacing(2),
-  }),
-  centered: css({
+  wrapper: css({
     display: 'flex',
-    justifyContent: 'center',
-    padding: theme.spacing(4),
+    flexDirection: 'column' as const,
+    height: '100%',
+  }),
+  pickerRow: css({
+    marginBottom: theme.spacing(2),
+    maxWidth: 400,
   }),
   mapContainer: css({
-    height: 'calc(100vh - 200px)',
-    minHeight: '500px',
+    flex: 1,
+    minHeight: 500,
     borderRadius: theme.shape.radius.default,
     overflow: 'hidden',
   }),
-  modalLoading: css({
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(1),
-    padding: theme.spacing(2),
-  }),
-});
-
-const getPopupStyles = (theme: GrafanaTheme2) => ({
   popup: css({
-    padding: theme.spacing(0.5),
-    color: '#1e1e1e',
+    fontSize: theme.typography.bodySmall.fontSize,
+    lineHeight: 1.6,
+    color: theme.colors.text.primary,
   }),
-  title: css({
-    fontWeight: theme.typography.fontWeightBold,
-    fontSize: theme.typography.h5.fontSize,
-    marginBottom: theme.spacing(0.5),
-  }),
-  subtitle: css({
-    fontWeight: theme.typography.fontWeightBold,
-    marginBottom: theme.spacing(0.25),
-  }),
-  section: css({
-    marginBottom: theme.spacing(0.5),
-    '& > div': {
-      lineHeight: 1.5,
-      fontSize: theme.typography.bodySmall.fontSize,
-    },
+  popupDivider: css({
+    margin: `${theme.spacing(0.5)} 0`,
+    border: 'none',
+    borderTop: `1px solid ${theme.colors.border.weak}`,
   }),
 });

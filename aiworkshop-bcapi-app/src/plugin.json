@@ -3,8 +3,6 @@
   "type": "app",
   "name": "Bcapi",
   "id": "aiworkshop-bcapi-app",
-  "backend": true,
-  "executable": "gpx_bcapi",
   "info": {
     "keywords": ["app"],
     "description": "",

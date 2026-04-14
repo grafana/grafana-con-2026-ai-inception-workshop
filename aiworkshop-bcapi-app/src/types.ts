@@ -23,3 +23,10 @@ export interface StationStatus {
   status: string;
   last_reported: number;
 }
+
+export interface Station {
+  info: StationInfo;
+  status?: StationStatus;
+}
+
+export type DsRef = string | null;

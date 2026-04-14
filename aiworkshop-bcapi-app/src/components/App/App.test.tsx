@@ -1,14 +1,17 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRootProps, PluginType } from '@grafana/data';
 import { render, waitFor } from '@testing-library/react';
 import App from './App';
 
-jest.mock('../../utils/datasource', () => ({
-  getDatasourceInstances: () => [],
-  fetchStationList: () => Promise.resolve([]),
-  fetchStationDetail: () => Promise.resolve(null),
-  clearDetailCache: () => {},
+jest.mock('@grafana/runtime', () => ({
+  ...jest.requireActual('@grafana/runtime'),
+  getDataSourceSrv: () => ({
+    getList: () => [],
+    get: jest.fn(),
+    getInstanceSettings: jest.fn(),
+    reload: jest.fn(),
+  }),
 }));
 
 describe('Components/App', () => {
@@ -32,15 +35,13 @@ describe('Components/App', () => {
     } as unknown as AppRootProps;
   });
 
-  test('renders without an error', async () => {
-    const { container } = render(
+  test('renders without an error"', async () => {
+    const { getByTestId } = render(
       <MemoryRouter>
-        <Suspense fallback={null}>
-          <App {...props} />
-        </Suspense>
+        <App {...props} />
       </MemoryRouter>
     );
 
-    await waitFor(() => expect(container.querySelector('[data-testid="data-testid pg-stations-container"]')).toBeInTheDocument(), { timeout: 2000 });
+    await waitFor(() => expect(getByTestId('stations-container')).toBeInTheDocument(), { timeout: 2000 });
   });
 });

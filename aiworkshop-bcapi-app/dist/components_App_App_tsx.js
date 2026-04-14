@@ -1,0 +1,42 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+(self["webpackChunkaiworkshop_bcapi_app"] = self["webpackChunkaiworkshop_bcapi_app"] || []).push([["components_App_App_tsx"],{
+
+/***/ "./components/App/App.tsx"
+/*!********************************!*\
+  !*** ./components/App/App.tsx ***!
+  \********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ \"react-router\");\n/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_router_dom__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../constants */ \"./constants.ts\");\n\n\n\nconst StationsPage = /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().lazy(()=>__webpack_require__.e(/*! import() */ \"pages_StationsPage_tsx\").then(__webpack_require__.bind(__webpack_require__, /*! ../../pages/StationsPage */ \"./pages/StationsPage.tsx\")));\nconst MapPage = /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().lazy(()=>Promise.all(/*! import() */[__webpack_require__.e(\"vendors-node_modules_maplibre-gl_dist_maplibre-gl_css-node_modules_react-map-gl_dist_maplibre_js\"), __webpack_require__.e(\"pages_MapPage_tsx-data_image_svg_xml_charset_utf-8_3Csvg_xmlns_27http_www_w3_org_2000_svg_27_-06f13a\")]).then(__webpack_require__.bind(__webpack_require__, /*! ../../pages/MapPage */ \"./pages/MapPage.tsx\")));\nfunction App(props) {\n    return /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Routes, null, /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Route, {\n        path: _constants__WEBPACK_IMPORTED_MODULE_2__.ROUTES.Map,\n        element: /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MapPage, null)\n    }), /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Route, {\n        path: \"*\",\n        element: /*#__PURE__*/ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StationsPage, null)\n    }));\n}\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9jb21wb25lbnRzL0FwcC9BcHAudHN4IiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUEwQjtBQUN1QjtBQUVSO0FBRXpDLE1BQU1JLDZCQUFlSixpREFBVSxDQUFDLElBQU0sK0tBQU87QUFDN0MsTUFBTU0sd0JBQVVOLGlEQUFVLENBQUMsSUFBTSw0WEFBTztBQUV4QyxTQUFTTyxJQUFJQyxLQUFtQjtJQUM5QixxQkFDRSwyREFBQ04sb0RBQU1BLHNCQUNMLDJEQUFDRCxtREFBS0E7UUFBQ1EsTUFBTU4sOENBQU1BLENBQUNPLEdBQUc7UUFBRUMsdUJBQVMsMkRBQUNMO3NCQUNuQywyREFBQ0wsbURBQUtBO1FBQUNRLE1BQUs7UUFBSUUsdUJBQVMsMkRBQUNQOztBQUdoQztBQUVBLGlFQUFlRyxHQUFHQSxFQUFDIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vYWl3b3Jrc2hvcC1iY2FwaS1hcHAvLi9jb21wb25lbnRzL0FwcC9BcHAudHN4PzJjNmUiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IFJvdXRlLCBSb3V0ZXMgfSBmcm9tICdyZWFjdC1yb3V0ZXItZG9tJztcbmltcG9ydCB7IEFwcFJvb3RQcm9wcyB9IGZyb20gJ0BncmFmYW5hL2RhdGEnO1xuaW1wb3J0IHsgUk9VVEVTIH0gZnJvbSAnLi4vLi4vY29uc3RhbnRzJztcblxuY29uc3QgU3RhdGlvbnNQYWdlID0gUmVhY3QubGF6eSgoKSA9PiBpbXBvcnQoJy4uLy4uL3BhZ2VzL1N0YXRpb25zUGFnZScpKTtcbmNvbnN0IE1hcFBhZ2UgPSBSZWFjdC5sYXp5KCgpID0+IGltcG9ydCgnLi4vLi4vcGFnZXMvTWFwUGFnZScpKTtcblxuZnVuY3Rpb24gQXBwKHByb3BzOiBBcHBSb290UHJvcHMpIHtcbiAgcmV0dXJuIChcbiAgICA8Um91dGVzPlxuICAgICAgPFJvdXRlIHBhdGg9e1JPVVRFUy5NYXB9IGVsZW1lbnQ9ezxNYXBQYWdlIC8+fSAvPlxuICAgICAgPFJvdXRlIHBhdGg9XCIqXCIgZWxlbWVudD17PFN0YXRpb25zUGFnZSAvPn0gLz5cbiAgICA8L1JvdXRlcz5cbiAgKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgQXBwO1xuIl0sIm5hbWVzIjpbIlJlYWN0IiwiUm91dGUiLCJSb3V0ZXMiLCJST1VURVMiLCJTdGF0aW9uc1BhZ2UiLCJsYXp5IiwiTWFwUGFnZSIsIkFwcCIsInByb3BzIiwicGF0aCIsIk1hcCIsImVsZW1lbnQiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./components/App/App.tsx\n\n}");
+
+/***/ },
+
+/***/ "./constants.ts"
+/*!**********************!*\
+  !*** ./constants.ts ***!
+  \**********************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   PLUGIN_BASE_URL: () => (/* binding */ PLUGIN_BASE_URL),\n/* harmony export */   ROUTES: () => (/* binding */ ROUTES)\n/* harmony export */ });\n/* harmony import */ var _plugin_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./plugin.json */ \"./plugin.json\");\n\nconst PLUGIN_BASE_URL = `/a/${_plugin_json__WEBPACK_IMPORTED_MODULE_0__.id}`;\nvar ROUTES = /*#__PURE__*/ function(ROUTES) {\n    ROUTES[\"Stations\"] = \"stations\";\n    ROUTES[\"Map\"] = \"map\";\n    return ROUTES;\n}({});\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9jb25zdGFudHMudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQXVDO0FBRWhDLE1BQU1DLGtCQUFrQixDQUFDLEdBQUcsRUFBRUQsNENBQWEsRUFBRSxDQUFDO0FBRTlDLG9DQUFLRzs7O1dBQUFBO01BR1giLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9haXdvcmtzaG9wLWJjYXBpLWFwcC8uL2NvbnN0YW50cy50cz8zNzdmIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBwbHVnaW5Kc29uIGZyb20gJy4vcGx1Z2luLmpzb24nO1xuXG5leHBvcnQgY29uc3QgUExVR0lOX0JBU0VfVVJMID0gYC9hLyR7cGx1Z2luSnNvbi5pZH1gO1xuXG5leHBvcnQgZW51bSBST1VURVMge1xuICBTdGF0aW9ucyA9ICdzdGF0aW9ucycsXG4gIE1hcCA9ICdtYXAnLFxufVxuIl0sIm5hbWVzIjpbInBsdWdpbkpzb24iLCJQTFVHSU5fQkFTRV9VUkwiLCJpZCIsIlJPVVRFUyJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./constants.ts\n\n}");
+
+/***/ },
+
+/***/ "./plugin.json"
+/*!*********************!*\
+  !*** ./plugin.json ***!
+  \*********************/
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json","type":"app","name":"Bcapi","id":"aiworkshop-bcapi-app","info":{"keywords":["app"],"description":"","author":{"name":"Aiworkshop"},"logos":{"small":"img/logo.svg","large":"img/logo.svg"},"screenshots":[],"version":"%VERSION%","updated":"%TODAY%"},"includes":[{"type":"page","name":"Stations","path":"/a/%PLUGIN_ID%/stations","addToNav":true,"defaultNav":true},{"type":"page","name":"Map","path":"/a/%PLUGIN_ID%/map","addToNav":true,"defaultNav":false},{"type":"page","icon":"cog","name":"Configuration","path":"/plugins/%PLUGIN_ID%","role":"Admin","addToNav":true}],"dependencies":{"grafanaDependency":">=12.3.0","plugins":[]}}');
+
+/***/ }
+
+}]);

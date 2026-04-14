@@ -1,253 +1,133 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/css';
-import { GrafanaTheme2 } from '@grafana/data';
-import { PluginPage } from '@grafana/runtime';
-import { Alert, Card, Combobox, type ComboboxOption, Spinner, Tooltip, useStyles2 } from '@grafana/ui';
-import {
-  type StationDetail,
-  type StationListItem,
-  getDatasourceInstances,
-  fetchStationList,
-  fetchStationDetail,
-  clearDetailCache,
-} from '../utils/datasource';
+import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
+import { DataSourcePicker, PluginPage, getDataSourceSrv } from '@grafana/runtime';
+import { Alert, LoadingPlaceholder, Tooltip, useStyles2 } from '@grafana/ui';
+import { useStations } from '../hooks/useStations';
+import { Station } from '../types';
 import { testIds } from '../components/testIds';
 
-type ListState = {
-  items: StationListItem[];
-  loading: boolean;
-  error: string | null;
-};
-
-type ListAction =
-  | { type: 'fetch' }
-  | { type: 'success'; items: StationListItem[] }
-  | { type: 'error'; message: string };
-
-function listReducer(state: ListState, action: ListAction): ListState {
-  switch (action.type) {
-    case 'fetch':
-      return { items: [], loading: true, error: null };
-    case 'success':
-      return { items: action.items, loading: false, error: null };
-    case 'error':
-      return { items: [], loading: false, error: action.message };
-  }
-}
-
-function useStationList(dsUid: string | undefined) {
-  const [state, dispatch] = useReducer(listReducer, { items: [], loading: false, error: null });
-
-  useEffect(() => {
-    if (!dsUid) {
-      return;
-    }
-    let cancelled = false;
-    clearDetailCache();
-    dispatch({ type: 'fetch' });
-    fetchStationList(dsUid)
-      .then((data) => {
-        if (!cancelled) {
-          dispatch({ type: 'success', items: data });
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          dispatch({ type: 'error', message: err.message ?? 'Failed to fetch stations' });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [dsUid]);
-
-  return state;
-}
+const DS_PLUGIN_ID = 'aiworkshop-bcapi-datasource';
 
 function StationsPage() {
-  const s = useStyles2(getStyles);
+  const styles = useStyles2(getStyles);
+  const [dsUid, setDsUid] = useState<string | null>(() => {
+    const list = getDataSourceSrv().getList({ pluginId: DS_PLUGIN_ID });
+    return list.length > 0 ? list[0].uid : null;
+  });
 
-  const dsOptions = useMemo(() => {
-    return getDatasourceInstances().map((ds) => ({ label: ds.name, value: ds.uid }));
-  }, []);
+  const { stations, loading, error } = useStations(dsUid);
 
-  const [selectedDs, setSelectedDs] = useState<string | null>(dsOptions[0]?.value ?? null);
-  const { items, loading, error } = useStationList(selectedDs ?? undefined);
-
-  const handleDsChange = useCallback((option: ComboboxOption<string>) => {
-    setSelectedDs(option.value);
-  }, []);
+  const onDsChange = (ds: DataSourceInstanceSettings) => {
+    setDsUid(ds.uid);
+  };
 
   return (
     <PluginPage>
-      <div data-testid={testIds.stations.container}>
-        <div className={s.dsSelector}>
-          <Combobox
-            data-testid={testIds.stations.datasourceSelect}
-            options={dsOptions}
-            value={selectedDs}
-            onChange={handleDsChange}
-            placeholder="Select a datasource"
-            width={40}
+      <div data-testid={testIds.stationsPage.container}>
+        <div className={styles.pickerRow}>
+          <DataSourcePicker
+            pluginId={DS_PLUGIN_ID}
+            current={dsUid}
+            onChange={onDsChange}
           />
         </div>
 
-        {error && <Alert severity="error" title="Error loading stations">{error}</Alert>}
+        {loading && <LoadingPlaceholder text="Loading stations..." />}
+        {error && <Alert title="Error loading stations" severity="error">{error}</Alert>}
 
-        {loading && (
-          <div className={s.centered}>
-            <Spinner size="xl" />
-          </div>
-        )}
-
-        {!loading && !error && items.length === 0 && selectedDs && (
-          <Alert severity="info" title="No stations found">No station data returned from the datasource.</Alert>
-        )}
-
-        {!loading && !error && !selectedDs && (
-          <Alert severity="warning" title="No datasource">
-            No aiworkshop-bcapi-datasource instance found. Please configure one first.
-          </Alert>
-        )}
-
-        {!loading && items.length > 0 && selectedDs && (
-          <div data-testid={testIds.stations.stationList} className={s.stationList}>
-            {items.map((item) => (
-              <StationCard key={item.value} item={item} dsUid={selectedDs} />
+        {!loading && !error && stations.length > 0 && (
+          <div className={styles.list}>
+            {stations.map((station) => (
+              <StationItem key={station.info.station_id} station={station} />
             ))}
           </div>
+        )}
+
+        {!loading && !error && stations.length === 0 && dsUid && (
+          <p>No stations found.</p>
         )}
       </div>
     </PluginPage>
   );
 }
 
-function StationCard({ item, dsUid }: { item: StationListItem; dsUid: string }) {
-  const s = useStyles2(getStyles);
-  const [detail, setDetail] = useState<StationDetail | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
+function StationItem({ station }: { station: Station }) {
+  const styles = useStyles2(getStyles);
+  const { info, status } = station;
 
-  const handleMouseEnter = useCallback(() => {
-    if (detail || detailLoading) {
-      return;
-    }
-    setDetailLoading(true);
-    fetchStationDetail(dsUid, item.value)
-      .then(setDetail)
-      .catch(() => {})
-      .finally(() => setDetailLoading(false));
-  }, [detail, detailLoading, dsUid, item.value]);
-
-  return (
-    <Tooltip
-      content={<StationTooltip detail={detail} loading={detailLoading} name={item.label} />}
-      placement="right"
-      interactive
-    >
-      <div onMouseEnter={handleMouseEnter}>
-        <Card data-testid={testIds.stations.stationItem} className={s.stationCard}>
-          <Card.Heading>{item.label}</Card.Heading>
-        </Card>
-      </div>
-    </Tooltip>
-  );
-}
-
-function StationTooltip({ detail, loading, name }: { detail: StationDetail | null; loading: boolean; name: string }) {
-  const s = useStyles2(getTooltipStyles);
-
-  if (loading) {
-    return (
-      <div className={s.tooltip}>
-        <Spinner size="sm" /> Loading...
-      </div>
-    );
-  }
-
-  if (!detail) {
-    return (
-      <div className={s.tooltip}>
-        <div className={s.title}>{name}</div>
-        <div>Hover to load details</div>
-      </div>
-    );
-  }
-
-  const { info, status } = detail;
-
-  return (
-    <div className={s.tooltip}>
-      <div className={s.title}>{info?.name ?? name}</div>
-      {info && (
-        <div className={s.section}>
-          <div>{info.address}</div>
-          {info.post_code && <div>Post code: {info.post_code}</div>}
-          <div>Capacity: {info.capacity} docks</div>
-          <div>Type: {info.physical_configuration}</div>
-          {info.is_charging_station && <div>Charging station</div>}
-          <div>
-            Location: {info.latitude.toFixed(4)}, {info.longitude.toFixed(4)}
-          </div>
-        </div>
-      )}
+  const tooltipContent = (
+    <div className={styles.tooltip}>
+      <div><strong>{info.name}</strong></div>
+      <div>{info.address}</div>
+      {info.post_code && <div>Post code: {info.post_code}</div>}
+      <div>Capacity: {info.capacity} docks</div>
+      <div>Type: {info.physical_configuration}</div>
+      <div>Charging: {info.is_charging_station ? 'Yes' : 'No'}</div>
+      <div>Coordinates: {info.latitude.toFixed(5)}, {info.longitude.toFixed(5)}</div>
+      {info.altitude > 0 && <div>Altitude: {info.altitude}m</div>}
       {status && (
-        <div className={s.section}>
-          <div className={s.subtitle}>Real-time status</div>
-          <div>
-            Bikes available: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)
-          </div>
-          <div>Docks available: {status.num_docks_available}</div>
-          <div>Bikes disabled: {status.num_bikes_disabled}</div>
-          <div>Docks disabled: {status.num_docks_disabled}</div>
+        <>
+          <hr className={styles.tooltipDivider} />
           <div>Status: {status.status}</div>
-          {status.last_reported > 0 && (
-            <div>Last reported: {new Date(status.last_reported).toLocaleString()}</div>
-          )}
-        </div>
+          <div>Bikes: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
+          <div>Docks available: {status.num_docks_available}</div>
+          {status.num_bikes_disabled > 0 && <div>Bikes disabled: {status.num_bikes_disabled}</div>}
+          {status.num_docks_disabled > 0 && <div>Docks disabled: {status.num_docks_disabled}</div>}
+          <div>Last reported: {new Date(status.last_reported * 1000).toLocaleString()}</div>
+        </>
       )}
     </div>
+  );
+
+  return (
+    <Tooltip content={tooltipContent} placement="right">
+      <div className={styles.item} data-testid={testIds.stationsPage.stationItem}>
+        <div className={styles.itemName}>{info.name}</div>
+        <div className={styles.itemMeta}>
+          {info.address}
+          {status && ` \u2014 Bikes: ${status.num_bikes_available} | Docks: ${status.num_docks_available}`}
+        </div>
+      </div>
+    </Tooltip>
   );
 }
 
 export default StationsPage;
 
 const getStyles = (theme: GrafanaTheme2) => ({
-  dsSelector: css({
+  pickerRow: css({
     marginBottom: theme.spacing(2),
+    maxWidth: 400,
   }),
-  centered: css({
+  list: css({
     display: 'flex',
-    justifyContent: 'center',
-    padding: theme.spacing(4),
+    flexDirection: 'column' as const,
+    gap: theme.spacing(0.5),
   }),
-  stationList: css({
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-    gap: theme.spacing(1),
-  }),
-  stationCard: css({
+  item: css({
+    padding: theme.spacing(1, 1.5),
+    background: theme.colors.background.secondary,
+    borderRadius: theme.shape.radius.default,
     cursor: 'pointer',
-  }),
-});
-
-const getTooltipStyles = (theme: GrafanaTheme2) => ({
-  tooltip: css({
-    padding: theme.spacing(1),
-    maxWidth: '350px',
-  }),
-  title: css({
-    fontWeight: theme.typography.fontWeightBold,
-    fontSize: theme.typography.h5.fontSize,
-    marginBottom: theme.spacing(1),
-  }),
-  subtitle: css({
-    fontWeight: theme.typography.fontWeightBold,
-    marginBottom: theme.spacing(0.5),
-  }),
-  section: css({
-    marginBottom: theme.spacing(1),
-    '& > div': {
-      lineHeight: 1.6,
+    '&:hover': {
+      background: theme.colors.action.hover,
     },
+  }),
+  itemName: css({
+    fontWeight: theme.typography.fontWeightMedium,
+  }),
+  itemMeta: css({
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.bodySmall.fontSize,
+  }),
+  tooltip: css({
+    fontSize: theme.typography.bodySmall.fontSize,
+    lineHeight: 1.6,
+  }),
+  tooltipDivider: css({
+    margin: `${theme.spacing(0.5)} 0`,
+    border: 'none',
+    borderTop: `1px solid ${theme.colors.border.weak}`,
   }),
 });
