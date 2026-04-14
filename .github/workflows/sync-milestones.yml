@@ -1,0 +1,103 @@
+name: Sync milestone branches with main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - id: get-secrets
+        uses: grafana/shared-workflows/actions/get-vault-secrets@f1614b210386ac420af6807a997ac7f6d96e477a # get-vault-secrets/v1.3.1
+        with:
+          vault_instance: ops
+          common_secrets: |
+            GITHUB_APP_ID=plugins-platform-bot-app:app-id
+            GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:private-key
+          export_env: false
+
+      - name: Generate token
+        id: generate_token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
+        with:
+          app-id: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_ID }}
+          private-key: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          fetch-depth: 0
+          persist-credentials: true # zizmor: ignore[artipacked] -- needs credentials for git push
+
+      - name: Sync milestone chain
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Define the sync chain: main → m1 → m2 → m3
+          PAIRS=(
+            "main:milestone1-completed"
+            "milestone1-completed:milestone2-completed"
+            "milestone2-completed:milestone3-completed"
+          )
+
+          for PAIR in "${PAIRS[@]}"; do
+            SOURCE="${PAIR%%:*}"
+            TARGET="${PAIR##*:}"
+
+            echo "=========================================="
+            echo "Syncing $SOURCE → $TARGET"
+            echo "=========================================="
+
+            if ! git ls-remote --exit-code origin "$TARGET" > /dev/null 2>&1; then
+              echo "Branch $TARGET does not exist on remote. Skipping."
+              continue
+            fi
+
+            # Re-fetch to pick up any changes from previous iterations
+            git fetch origin "$SOURCE" "$TARGET"
+
+            if git merge-base --is-ancestor "origin/$SOURCE" "origin/$TARGET"; then
+              echo "No drift detected — $SOURCE is already merged into $TARGET."
+              continue
+            fi
+
+            echo "Drift detected between $SOURCE and $TARGET."
+
+            git checkout -B "$TARGET" "origin/$TARGET"
+
+            if git merge "origin/$SOURCE" --no-edit -m "chore: sync $SOURCE into $TARGET"; then
+              echo "Merge succeeded. Pushing directly."
+              git push origin "$TARGET"
+            else
+              echo "::warning::Merge conflicts detected for $SOURCE → $TARGET. Creating PR for manual resolution."
+              git merge --abort
+
+              SYNC_BRANCH="sync/${SOURCE}-into-${TARGET}"
+              git checkout -B "$SYNC_BRANCH" "origin/$TARGET"
+              git merge "origin/$SOURCE" --no-edit || true
+              git add -A
+              git commit --no-edit -m "chore: sync $SOURCE into $TARGET (conflicts need resolution)"
+              git push --force-with-lease origin "$SYNC_BRANCH"
+
+              PR_TITLE="chore: sync $SOURCE into $TARGET (conflicts)"
+              PR_BODY="Auto-generated PR because merging \`$SOURCE\` into \`$TARGET\` hit conflicts that need manual resolution."
+
+              EXISTING_PR=$(gh pr list --base "$TARGET" --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+              if [ -n "${EXISTING_PR:-}" ]; then
+                echo "PR #$EXISTING_PR already exists. Sync branch updated."
+                gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+              else
+                gh pr create --base "$TARGET" --head "$SYNC_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
+              fi
+            fi
+          done

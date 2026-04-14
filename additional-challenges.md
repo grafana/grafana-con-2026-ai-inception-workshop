@@ -36,6 +36,16 @@ npm run server
 npm run e2e
 ```
 
+## On-Demand Loading and Pagination
+
+The app probably loads all station information at once. Make it smarter by loading details on demand and adding pagination to the list.
+
+```
+Refactor the station list page so it does not load all station information upfront.
+Add pagination to the station list.
+Load station details on demand only when the user hovers over or selects a station.
+```
+
 ## Color-Coded Map Markers
 
 Make the map instantly tell you where bikes are available by coloring markers based on availability.
@@ -81,3 +91,7 @@ Add a quick way to find specific stations without scrolling through the full lis
 ```
 Add a search bar at the top of the station list page that filters stations in real time as the user types. It should match against station name, address, and district. Also add filter toggles to show only stations that have bikes available, only e-bike stations, or only stations that are currently in service.
 ```
+
+## Hot reload plugins
+
+Can you get the app and data source plugins to reload on changes?
