@@ -1,0 +1,10 @@
+apiVersion: 1
+datasources:
+  - name: Barcelona Bicing
+    type: aiworkshop-bcapi-datasource
+    access: proxy
+    isDefault: true
+    jsonData:
+      baseURL: https://cc-workshop-proxy.grafana.fun/bcapi/
+    secureJsonData:
+      apiKey: "barcelona2026"
