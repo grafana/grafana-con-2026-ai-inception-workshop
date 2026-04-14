@@ -84,6 +84,7 @@ npm run server
 
 Awesome! You now have an actually working data source.
 
+> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes.
 
 ### Storing Knowledge
 We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
@@ -94,8 +95,6 @@ This information should help future sessions understand the plugin without re-re
 ```
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
-
-> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes.
 
 <a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
@@ -175,6 +174,10 @@ Create a second page in the bicing app that I can access via the navigation menu
 I should be able to see a map of all the stations with tooltip details.
 Use react map gl and openfreemap.
 ```
+
+Once done, verify the map is working:
+- Refresh your Grafana instance
+- Navigate to the Map page via the navigation menu — you should see stations plotted on a map with tooltips on hover.
 
 > **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes.
 
