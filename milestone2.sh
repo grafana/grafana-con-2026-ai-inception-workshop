@@ -34,7 +34,7 @@ cd "$PROJECT_DIR"
 # Scaffold app plugin
 if [ ! -d "$APP_DIR" ]; then
   echo ">>> Scaffolding app plugin..."
-  npx -y @grafana/create-plugin@latest --plugin-type=app --backend --plugin-name=bcapi --org-name=aiworkshop
+  npx -y @grafana/create-plugin@latest --plugin-type=app --plugin-name=bcapi --org-name=aiworkshop
 
   echo ">>> Pinning Grafana dependencies to 12.4.2..."
   cd "$PROJECT_DIR/$APP_DIR"
@@ -54,9 +54,6 @@ npm install --no-audit --no-fund || true
 
 echo ">>> Building app frontend..."
 npm run build || true
-
-echo ">>> Building app backend..."
-mage -v build:linux || true
 
 # Overwrite docker-compose.yaml with volumes, env, and provisioning
 echo ">>> Configuring docker-compose with datasource and provisioning..."
