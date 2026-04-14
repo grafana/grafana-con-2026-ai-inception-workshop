@@ -92,7 +92,7 @@ KEY=""
 
 while [ -z "$KEY" ] && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; do
  ATTEMPT=$((ATTEMPT + 1))
- read -s -p "Enter workshop password: " PASSWORD
+ read -p "Enter workshop password: " PASSWORD
  echo
 
  RESPONSE=$(curl -s -X POST "$PROXY_URL/workshop/key" -d "{\"password\":\"$PASSWORD\"}")
