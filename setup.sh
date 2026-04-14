@@ -50,16 +50,18 @@ if [ "$IS_LOCAL" = true ]; then
  fi
 fi
 
-# Check if claude is installed
+# Check if claude is installed, install if in codespaces
 if ! command -v claude &> /dev/null; then
  if [ "$IS_LOCAL" = true ]; then
    echo "Error: Claude Code is not installed."
    echo "Install it with: curl -fsSL https://claude.ai/install.sh | bash"
    exit 1
  else
-   echo "Error: claude is not installed."
-   echo "This should not happen with the devcontainer setup."
-   exit 1
+   echo "Installing Claude Code..."
+   curl -fsSL https://claude.ai/install.sh | bash
+   echo 'alias claude="TERM_PROGRAM=xterm claude"' >> ~/.bashrc
+   # Reload to get claude in PATH
+   export PATH="$HOME/.claude/local/bin:$PATH"
  fi
 fi
 
