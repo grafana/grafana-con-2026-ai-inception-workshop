@@ -52,7 +52,6 @@ if ! command -v claude &> /dev/null; then
    exit 1
  else
    echo "Installing Claude Code..."
-   export TERM_PROGRAM=xterm
    curl -fsSL https://claude.ai/install.sh | bash
    # Reload to get claude in PATH
    export PATH="$HOME/.claude/local/bin:$PATH"
@@ -177,8 +176,7 @@ else
    '{
      env: {
        ANTHROPIC_BASE_URL: $base_url,
-       ANTHROPIC_API_KEY: $key,
-       TERM_PROGRAM: "xterm"
+       ANTHROPIC_API_KEY: $key
      },
      model: "opus[1m]",
      permissions: {
