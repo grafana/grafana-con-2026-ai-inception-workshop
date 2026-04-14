@@ -25,6 +25,14 @@ cd "$PROJECT_DIR"
 if [ ! -d "$APP_DIR" ]; then
   echo ">>> Scaffolding app plugin..."
   npx -y @grafana/create-plugin@latest --plugin-type=app --backend --plugin-name=bcapi --org-name=aiworkshop
+
+  echo ">>> Pinning Grafana dependencies to 12.4.2..."
+  cd "$PROJECT_DIR/$APP_DIR"
+  sed -i 's/"@grafana\/data": "[^"]*"/"@grafana\/data": "12.4.2"/' package.json
+  sed -i 's/"@grafana\/i18n": "[^"]*"/"@grafana\/i18n": "12.4.2"/' package.json
+  sed -i 's/"@grafana\/runtime": "[^"]*"/"@grafana\/runtime": "12.4.2"/' package.json
+  sed -i 's/"@grafana\/ui": "[^"]*"/"@grafana\/ui": "12.4.2"/' package.json
+  sed -i 's/"@grafana\/schema": "[^"]*"/"@grafana\/schema": "12.4.2"/' package.json
 else
   echo ">>> App plugin directory already exists, skipping scaffold."
 fi
