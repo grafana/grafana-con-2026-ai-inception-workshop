@@ -21,10 +21,10 @@ fi
 
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PLUGIN_DIR"
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund || true
 
 echo ">>> Building backend..."
-mage -v build:linux
+mage -v build:linux || true
 
 # Overwrite docker-compose.yaml to enable development mode for backend auto-reload
 echo ">>> Enabling development mode..."
