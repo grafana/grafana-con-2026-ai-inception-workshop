@@ -177,7 +177,8 @@ else
    '{
      env: {
        ANTHROPIC_BASE_URL: $base_url,
-       ANTHROPIC_API_KEY: $key
+       ANTHROPIC_API_KEY: $key,
+       TERM_PROGRAM: "xterm"
      },
      model: "opus[1m]",
      permissions: {
