@@ -10,4 +10,5 @@ services:
       - ../aiworkshop-bcapi-datasource/dist:/var/lib/grafana/plugins/aiworkshop-bcapi-datasource
       - ./provisioning:/etc/grafana/provisioning
     environment:
+      GF_INSTALL_PLUGINS: grafana-llm-app
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: aiworkshop-bcapi-datasource,aiworkshop-bcapi-app

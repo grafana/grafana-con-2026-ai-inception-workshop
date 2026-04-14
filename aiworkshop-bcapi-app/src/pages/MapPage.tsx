@@ -2,10 +2,11 @@ import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { css } from '@emotion/css';
 import { DataSourceInstanceSettings, GrafanaTheme2 } from '@grafana/data';
 import { DataSourcePicker, PluginPage, getDataSourceSrv } from '@grafana/runtime';
-import { Alert, LoadingPlaceholder, useStyles2, useTheme2 } from '@grafana/ui';
+import { Alert, Button, Drawer, LoadingPlaceholder, useStyles2, useTheme2 } from '@grafana/ui';
 import MapGL, { Source, Layer, Popup, type MapLayerMouseEvent, type MapRef } from 'react-map-gl/maplibre';
 import type { GeoJSONSource } from 'maplibre-gl';
 import type { Point } from 'geojson';
+import { llm } from '@grafana/llm';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStations } from '../hooks/useStations';
 import { Station } from '../types';
@@ -21,6 +22,43 @@ const INITIAL_VIEW = {
   zoom: 13,
 };
 
+async function askAboutStation(station: Station): Promise<string> {
+  const isEnabled = await llm.enabled();
+  if (!isEnabled) {
+    throw new Error('Grafana LLM plugin is not enabled or configured.');
+  }
+
+  const { info, status } = station;
+  const prompt = [
+    `Tell me about this Barcelona Bicing station and what are the requirements to use it.`,
+    `Station: ${info.name}`,
+    `Address: ${info.address}`,
+    `Capacity: ${info.capacity} docks`,
+    `Type: ${info.physical_configuration}`,
+    `Charging station: ${info.is_charging_station ? 'Yes' : 'No'}`,
+    status ? `Status: ${status.status}` : '',
+    status ? `Bikes available: ${status.num_bikes_available} (${status.mechanical} mechanical, ${status.ebike} e-bike)` : '',
+    status ? `Docks available: ${status.num_docks_available}` : '',
+  ].filter(Boolean).join('\n');
+
+  const response = await llm.chatCompletions({
+    model: llm.Model.BASE,
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a helpful assistant knowledgeable about Barcelona\'s Bicing bicycle-sharing system. Keep answers concise (3-4 paragraphs max).',
+      },
+      { role: 'user', content: prompt },
+    ],
+  });
+
+  if (llm.isErrorResponse(response)) {
+    throw new Error(response.error);
+  }
+
+  return response.choices[0]?.message?.content ?? 'No response.';
+}
+
 function MapPage() {
   const styles = useStyles2(getStyles);
   const theme = useTheme2();
@@ -30,6 +68,10 @@ function MapPage() {
     return list.length > 0 ? list[0].uid : null;
   });
   const [popupStation, setPopupStation] = useState<Station | null>(null);
+  const [drawerStation, setDrawerStation] = useState<Station | null>(null);
+  const [llmReply, setLlmReply] = useState<string | null>(null);
+  const [llmLoading, setLlmLoading] = useState(false);
+  const [llmError, setLlmError] = useState<string | null>(null);
 
   const { stations, loading, error } = useStations(dsUid);
 
@@ -58,7 +100,6 @@ function MapPage() {
       return;
     }
 
-    // Cluster click — zoom into it
     if (feature.properties?.cluster) {
       const map = mapRef.current?.getMap();
       if (!map) {
@@ -72,7 +113,6 @@ function MapPage() {
       return;
     }
 
-    // Station click — show popup
     const id = feature.properties?.station_id;
     const station = stationMap.get(id);
     if (station) {
@@ -80,9 +120,30 @@ function MapPage() {
     }
   }, [stationMap]);
 
+  const onAskAI = useCallback((station: Station) => {
+    setPopupStation(null);
+    setDrawerStation(station);
+    setLlmReply(null);
+    setLlmError(null);
+    setLlmLoading(true);
+
+    askAboutStation(station)
+      .then((reply) => setLlmReply(reply))
+      .catch((err) => setLlmError(err instanceof Error ? err.message : 'LLM request failed'))
+      .finally(() => setLlmLoading(false));
+  }, []);
+
+  const onCloseDrawer = useCallback(() => {
+    setDrawerStation(null);
+    setLlmReply(null);
+    setLlmError(null);
+    setLlmLoading(false);
+  }, []);
+
   const onDsChange = (ds: DataSourceInstanceSettings) => {
     setDsUid(ds.uid);
     setPopupStation(null);
+    onCloseDrawer();
   };
 
   const primaryColor = theme.colors.primary.main;
@@ -162,19 +223,36 @@ function MapPage() {
                   anchor="bottom"
                   onClose={() => setPopupStation(null)}
                   offset={10}
+                  maxWidth="320px"
                 >
-                  <StationPopup station={popupStation} />
+                  <StationPopup station={popupStation} onAskAI={onAskAI} />
                 </Popup>
               )}
             </MapGL>
           </div>
+        )}
+
+        {drawerStation && (
+          <Drawer
+            title={drawerStation.info.name}
+            subtitle={drawerStation.info.address}
+            onClose={onCloseDrawer}
+            size="sm"
+          >
+            <StationDrawerContent
+              station={drawerStation}
+              reply={llmReply}
+              loading={llmLoading}
+              error={llmError}
+            />
+          </Drawer>
         )}
       </div>
     </PluginPage>
   );
 }
 
-function StationPopup({ station }: { station: Station }) {
+function StationPopup({ station, onAskAI }: { station: Station; onAskAI: (s: Station) => void }) {
   const styles = useStyles2(getStyles);
   const { info, status } = station;
 
@@ -182,21 +260,60 @@ function StationPopup({ station }: { station: Station }) {
     <div className={styles.popup}>
       <strong>{info.name}</strong>
       <div>{info.address}</div>
-      {info.post_code && <div>Post code: {info.post_code}</div>}
       <div>Capacity: {info.capacity} docks</div>
-      <div>Type: {info.physical_configuration}</div>
-      <div>Charging: {info.is_charging_station ? 'Yes' : 'No'}</div>
       {status && (
-        <>
-          <hr className={styles.popupDivider} />
+        <div>Bikes: {status.num_bikes_available} | Docks: {status.num_docks_available}</div>
+      )}
+      <div className={styles.popupActions}>
+        <Button size="sm" icon="ai" onClick={() => onAskAI(station)}>
+          Ask AI about this station
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface StationDrawerContentProps {
+  station: Station;
+  reply: string | null;
+  loading: boolean;
+  error: string | null;
+}
+
+function StationDrawerContent({ station, reply, loading, error: llmError }: StationDrawerContentProps) {
+  const styles = useStyles2(getStyles);
+  const { info, status } = station;
+
+  return (
+    <div className={styles.drawerContent}>
+      <div className={styles.drawerSection}>
+        <h4 className={styles.drawerSectionTitle}>Station details</h4>
+        {info.post_code && <div>Post code: {info.post_code}</div>}
+        <div>Capacity: {info.capacity} docks</div>
+        <div>Type: {info.physical_configuration}</div>
+        <div>Charging: {info.is_charging_station ? 'Yes' : 'No'}</div>
+        <div>Coordinates: {info.latitude.toFixed(5)}, {info.longitude.toFixed(5)}</div>
+        {info.altitude > 0 && <div>Altitude: {info.altitude}m</div>}
+      </div>
+
+      {status && (
+        <div className={styles.drawerSection}>
+          <h4 className={styles.drawerSectionTitle}>Live status</h4>
           <div>Status: {status.status}</div>
-          <div>Bikes: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
+          <div>Bikes available: {status.num_bikes_available} ({status.mechanical} mechanical, {status.ebike} e-bike)</div>
           <div>Docks available: {status.num_docks_available}</div>
           {status.num_bikes_disabled > 0 && <div>Bikes disabled: {status.num_bikes_disabled}</div>}
           {status.num_docks_disabled > 0 && <div>Docks disabled: {status.num_docks_disabled}</div>}
           <div>Last reported: {new Date(status.last_reported * 1000).toLocaleString()}</div>
-        </>
+        </div>
       )}
+
+      <div className={styles.drawerSection}>
+        <h4 className={styles.drawerSectionTitle}>AI assistant</h4>
+        {loading && <LoadingPlaceholder text="Thinking..." />}
+        {llmError && <Alert title="AI error" severity="error">{llmError}</Alert>}
+        {reply && <div className={styles.llmReply}>{reply}</div>}
+      </div>
     </div>
   );
 }
@@ -224,9 +341,24 @@ const getStyles = (theme: GrafanaTheme2) => ({
     lineHeight: 1.6,
     color: theme.colors.text.primary,
   }),
-  popupDivider: css({
-    margin: `${theme.spacing(0.5)} 0`,
-    border: 'none',
-    borderTop: `1px solid ${theme.colors.border.weak}`,
+  popupActions: css({
+    marginTop: theme.spacing(1),
+  }),
+  drawerContent: css({
+    fontSize: theme.typography.body.fontSize,
+    lineHeight: 1.6,
+    color: theme.colors.text.primary,
+  }),
+  drawerSection: css({
+    marginBottom: theme.spacing(2),
+  }),
+  drawerSectionTitle: css({
+    margin: `0 0 ${theme.spacing(1)} 0`,
+    color: theme.colors.text.primary,
+  }),
+  llmReply: css({
+    whiteSpace: 'pre-wrap',
+    lineHeight: 1.6,
+    color: theme.colors.text.primary,
   }),
 });
