@@ -49,6 +49,7 @@ fi
 
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
+docker compose down || true
 npm install --no-audit --no-fund || true
 
 echo ">>> Building app frontend..."
