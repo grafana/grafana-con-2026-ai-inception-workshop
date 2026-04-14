@@ -95,10 +95,7 @@ This information should help future sessions understand the plugin without re-re
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
 
-> **Fell behind?** If you didn't manage to finish Milestone 1, you can check out the `milestone1-completed` branch from the root of the workshop folder in your Codespace and continue from there:
-> ```
-> git checkout milestone1-completed
-> ```
+> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes.
 
 <a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
@@ -179,10 +176,7 @@ I should be able to see a map of all the stations with tooltip details.
 Use react map gl and openfreemap.
 ```
 
-> **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
-> ```
-> git checkout milestone2-completed
-> ```
+> **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes.
 
 <a id="milestone-3"></a>
 ## Milestone 3 - Advanced Features
