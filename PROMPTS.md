@@ -84,20 +84,20 @@ npm run server
 
 Awesome! You now have an actually working data source.
 
+> **Fell behind?** If you didn't manage to finish Milestone 1, ask Claude Code to switch to the `milestone1-completed` branch and discard your local changes:
+> ```
+> Switch to the milestone1-completed branch and discard my local changes
+> ```
 
 ### Storing Knowledge
 We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
 
 ```
 Store the essential information about the created datasource in CLAUDE.md file, including the plugin ID, API endpoints, authentication method, and supported query types.
+This information should help future sessions understand the plugin without re-reading all the source code.
 ```
 
 Great now we can move on to building the next plugin - a biking app that is going to use the data source you just created to visualize the bicing api data.
-
-> **Fell behind?** If you didn't manage to finish Milestone 1, you can check out the `milestone1-completed` branch from the root of the workshop folder in your Codespace and continue from there:
-> ```
-> git checkout milestone1-completed
-> ```
 
 <a id="milestone-2"></a>
 ## Milestone 2 - Barcelona Biking App
@@ -173,12 +173,18 @@ Once done, verify the app is working:
 Still in the same **claude** session (no need to switch to plan mode), prompt:
 
 ```
-Create a second page in the bicing app that I can access via the navigation menu too where I can see a map of all the stations with tooltip details. Use react map gl and openfreemap
+Create a second page in the bicing app that I can access via the navigation menu too.
+I should be able to see a map of all the stations with tooltip details.
+Use react map gl and openfreemap.
 ```
 
-> **Fell behind?** If you didn't manage to finish Milestone 2, you can check out the `milestone2-completed` branch from the root of the workshop folder in your Codespace and continue from there:
+Once done, verify the map is working:
+- Refresh your Grafana instance
+- Navigate to the Map page via the navigation menu — you should see stations plotted on a map with tooltips on hover.
+
+> **Fell behind?** If you didn't manage to finish Milestone 2, ask Claude Code to switch to the `milestone2-completed` branch and discard your local changes:
 > ```
-> git checkout milestone2-completed
+> Switch to the milestone2-completed branch and discard my local changes
 > ```
 
 <a id="milestone-3"></a>
@@ -189,16 +195,19 @@ Create a second page in the bicing app that I can access via the navigation menu
 Continue in the same **claude** session from Milestone 2.
 
 ```
-Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it. Use a synchronous non-streaming api.
+Add an option in the map so that when clicking on a station marker, it should use the @grafana/llm package to ask about that bicing station and the requirements to use it.
+Use a synchronous non-streaming api.
 ```
 
 Once this is done, prompt Claude to:
 
 ```
-Make sure the grafana-llm-app is automatically installed in my app project
+Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
+Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL.
+Use ${ANTHROPIC_API_KEY} as the anthropicKey in secureJsonData (it will be injected from the .env file).
 ```
 
-Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed. Click on it, go to "Configuration", and set up OpenAI or Anthropic API configuration. Ask us for a demo key you can use.
+Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
 
 You can now keep prompting Claude to modify the app views — change the map behavior, tweak what happens when a station is clicked, or whatever you wish.
 

@@ -30,12 +30,6 @@ if [ "$IS_LOCAL" = true ]; then
      exit 0
    fi
  fi
-else
- # Codespaces: original check
- if [ -f "$SETTINGS_FILE" ] && [ -f ~/.claude.json ]; then
-   echo "Setup has already been run. To re-run, remove ~/.claude/ and ~/.claude.json first."
-   exit 0
- fi
 fi
 
 # Local mode: confirm with user
@@ -50,16 +44,17 @@ if [ "$IS_LOCAL" = true ]; then
  fi
 fi
 
-# Check if claude is installed
+# Check if claude is installed, install if in codespaces
 if ! command -v claude &> /dev/null; then
  if [ "$IS_LOCAL" = true ]; then
    echo "Error: Claude Code is not installed."
    echo "Install it with: curl -fsSL https://claude.ai/install.sh | bash"
    exit 1
  else
-   echo "Error: claude is not installed."
-   echo "This should not happen with the devcontainer setup."
-   exit 1
+   echo "Installing Claude Code..."
+   curl -fsSL https://claude.ai/install.sh | bash
+   # Reload to get claude in PATH
+   export PATH="$HOME/.claude/local/bin:$PATH"
  fi
 fi
 
@@ -96,7 +91,7 @@ KEY=""
 
 while [ -z "$KEY" ] && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; do
  ATTEMPT=$((ATTEMPT + 1))
- read -s -p "Enter workshop password: " PASSWORD
+ read -p "Enter workshop password: " PASSWORD
  echo
 
  RESPONSE=$(curl -s -X POST "$PROXY_URL/workshop/key" -d "{\"password\":\"$PASSWORD\"}")
@@ -210,7 +205,24 @@ else
  echo "Claude setup is done"
 fi
 
-bash "$PROJECT_DIR/milestone1.sh"
+if [ -d "$PROJECT_DIR/aiworkshop-bcapi-app" ]; then
+  echo ">>> Detected app plugin — running milestone 2 setup..."
+  bash "$PROJECT_DIR/milestone2.sh"
+elif [ -d "$PROJECT_DIR/aiworkshop-bcapi-datasource" ]; then
+  echo ">>> Detected datasource plugin — running milestone 1 setup..."
+  bash "$PROJECT_DIR/milestone1.sh"
+else
+  bash "$PROJECT_DIR/milestone1.sh"
+fi
+
+# Write .env files for docker-compose so ANTHROPIC_API_KEY is available to containers
+# (Claude Code injects env vars from settings.json into its own process, but docker-compose
+# needs them in the shell or in a .env file)
+for plugin_dir in "$PROJECT_DIR"/aiworkshop-bcapi-*/; do
+  if [ -d "$plugin_dir" ]; then
+    echo "ANTHROPIC_API_KEY=$KEY" > "$plugin_dir/.env"
+  fi
+done
 
 echo ""
 echo "============================================"
