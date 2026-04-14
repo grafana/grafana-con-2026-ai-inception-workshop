@@ -15,6 +15,7 @@
 ## Workshop Resources
 
 - **[Prompts](PROMPTS.md)** - Step-by-step prompts and commands for each milestone
+- **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and how to fix them
 - [**Presentation Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
 
 ## Additional Challenges
