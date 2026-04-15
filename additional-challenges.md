@@ -99,14 +99,6 @@ The LLM should call the tools as needed and use the results to answer the user's
 Use a non-streaming chat API.
 ```
 
-## Station Recommendations via LLM
-
-Add a natural language search — type what you need and let AI find the right station.
-
-```
-Add a text input at the top of the map page where users can describe what they are looking for in natural language, for example "find me a station near the beach with e-bikes available". Use the @grafana/llm package to interpret the request, match it against the station data, and highlight the best matching stations on the map.
-```
-
 ## Natural Language Queries
 
 Let users ask questions about station data in plain English and get answers directly in the app.
