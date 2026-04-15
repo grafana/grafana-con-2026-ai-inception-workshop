@@ -71,6 +71,16 @@ If you've made changes but the Grafana UI looks outdated:
 
 The workshop password is shared by the instructor at the start of the session. If you missed it, ask a proctor. The script allows 3 attempts before locking out — if you've been locked out, just run `bash setup.sh` again.
 
+## Claude Code session lost after Codespace restart or pause/unpause
+
+If your Codespace was paused, restarted, or went idle and you had Claude Code in the middle of a plan or coding session — your session context may be lost. You can resume where you left off by typing:
+
+```
+/resume
+```
+
+This will restore your previous session state. Note that after resuming, Claude will **not** automatically be back in plan mode — you may need to nudge it to continue where it left off, e.g. "continue with the plan" or "keep going".
+
 ## Docker issues (local setup only)
 
 If `npm run server` fails with Docker-related errors:
