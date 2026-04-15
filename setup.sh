@@ -6,8 +6,8 @@ PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 BACKUP_FILE="$HOME/.claude/settings.json.workshop-backup"
 
-# Detect environment
-if [ "$CODESPACES" = "true" ]; then
+# Detect environment (CODESPACES is set by GitHub, REMOTE_CONTAINERS by VS Code Dev Containers)
+if [ "$CODESPACES" = "true" ] || [ "$REMOTE_CONTAINERS" = "true" ]; then
  IS_LOCAL=false
 else
  IS_LOCAL=true

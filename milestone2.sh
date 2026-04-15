@@ -22,13 +22,18 @@ docker compose -f "$PROJECT_DIR/$DS_DIR/docker-compose.yaml" down 2>/dev/null ||
 
 echo ">>> Installing data source dependencies..."
 cd "$PROJECT_DIR/$DS_DIR"
-npm install --no-audit --no-fund || true
+npm install --no-audit --no-fund --prefer-offline || true
 
 echo ">>> Building data source frontend..."
 npm run build || true
 
 echo ">>> Building data source backend..."
-mage -v build:linux || true
+ARCH=$(uname -m)
+if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+  mage -v build:linuxARM64 || true
+else
+  mage -v build:linux || true
+fi
 cd "$PROJECT_DIR"
 
 # Scaffold app plugin
@@ -50,7 +55,7 @@ fi
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PROJECT_DIR/$APP_DIR"
 docker compose down || true
-npm install --no-audit --no-fund || true
+npm install --no-audit --no-fund --prefer-offline || true
 
 echo ">>> Building app frontend..."
 npm run build || true

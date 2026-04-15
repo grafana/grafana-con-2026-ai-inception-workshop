@@ -22,10 +22,15 @@ fi
 echo ">>> Installing frontend dependencies (this will take a while)..."
 cd "$PLUGIN_DIR"
 docker compose down || true
-npm install --no-audit --no-fund || true
+npm install --no-audit --no-fund --prefer-offline || true
 
 echo ">>> Building backend..."
-mage -v build:linux || true
+ARCH=$(uname -m)
+if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+  mage -v build:linuxARM64 || true
+else
+  mage -v build:linux || true
+fi
 
 # Overwrite docker-compose.yaml to enable development mode for backend auto-reload
 echo ">>> Enabling development mode..."

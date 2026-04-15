@@ -1,5 +1,15 @@
 {
-  "name": "GrafanaCon 2026 - AI Workshop",
+  "name": "GrafanaCon 2026 - AI Workshop (Local)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.25"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
   "hostRequirements": {
     "cpus": 8,
     "memory": "8gb",
