@@ -93,7 +93,7 @@ Awesome! You now have an actually working data source.
 We want to make sure that next time Claude runs it actually remembers the most important information about your data source. In **claude** (still inside the plugin folder) run this prompt to update the plugin's own `CLAUDE.md`:
 
 ```
-Store the essential information about the created datasource in your memories, including the plugin ID, API endpoints, authentication method, and supported query types.
+Store the essential information about the created datasource in CLAUDE.md file, including the plugin ID, API endpoints, authentication method, and supported query types.
 This information should help future sessions understand the plugin without re-reading all the source code.
 ```
 
