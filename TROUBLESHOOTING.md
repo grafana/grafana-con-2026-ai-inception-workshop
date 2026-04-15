@@ -88,3 +88,17 @@ If `npm run server` fails with Docker-related errors:
 - Make sure Docker is **running** (not just installed).
 - Verify with: `docker run --rm hello-world`
 - On macOS, check that Docker Desktop is open. On Linux, check the daemon: `systemctl status docker`
+
+## Dev Container: "missing image information"
+
+If VS Code shows *"Dev Container configuration is missing image information"* when reopening in a container, make sure you're selecting the **"GrafanaCon 2026 - AI Workshop (Local)"** configuration. The "Codespaces" configuration uses an amd64-only image that cannot run locally on Apple Silicon Macs.
+
+## Dev Container: `setup.sh` runs in local mode
+
+If `setup.sh` prints "It looks like you're running on a local machine" inside a Dev Container, your container may not have the `REMOTE_CONTAINERS` environment variable set. Verify with:
+
+```bash
+echo $REMOTE_CONTAINERS
+```
+
+It should print `true`. If it doesn't, make sure you're in the VS Code terminal inside the Dev Container, not your host terminal.

@@ -1,0 +1,41 @@
+{
+  "name": "GrafanaCon 2026 - AI Workshop (Codespaces)",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "hostRequirements": {
+    "cpus": 8,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "-anthropic.claude-code"
+      ],
+      "settings": {
+        "workbench.secondarySideBar.defaultVisibility": "hidden",
+        "git.enabled": true,
+        "chat.disableAIFeatures": true,
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        },
+        "claudeCode.hideOnboarding": true,
+        "extensions.allowed": {
+          "anthropic.claude-code": false
+        }
+      }
+    }
+  },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Grafana",
+      "onAutoForward": "openBrowserOnce"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
+  "postCreateCommand": "",
+  "postAttachCommand": ""
+}
