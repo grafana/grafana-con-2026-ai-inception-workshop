@@ -2,7 +2,47 @@
 
 > **We recommend using GitHub Codespaces for this workshop.** Only follow these instructions if you're unable to use Codespaces.
 
-## Prerequisites
+## Option A: Local Dev Container (recommended for local setup)
+
+If you have **Docker** and **VS Code** installed, you can run the same containerized environment locally using Dev Containers — no need to install Go, Node, or other tools on your machine.
+
+### Prerequisites
+
+- [Docker Desktop](https://docs.docker.com/get-docker/)
+- [VS Code](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+### Steps
+
+1. Clone the repository and open it in VS Code:
+
+   ```bash
+   git clone https://github.com/grafana/grafana-con-2026-ai-inception-workshop.git
+   code grafana-con-2026-ai-inception-workshop
+   ```
+
+2. VS Code will prompt you to "Reopen in Container" (or use the command palette: **Dev Containers: Reopen in Container**).
+
+3. When prompted to select a configuration, choose **"GrafanaCon 2026 - AI Workshop (Local)"**.
+
+4. Wait for the container to build (first time takes a few minutes while it installs Go, Node, and Docker).
+
+5. Once inside the container, open a terminal and run:
+
+   ```bash
+   bash setup.sh
+   ```
+
+6. Enter the workshop password when prompted, then follow the instructions in `PROMPTS.md`.
+
+> **Note:** The "Local" configuration uses a multi-architecture base image that works on Apple Silicon (ARM) Macs, Intel Macs, Windows, and Linux. The "Codespaces" configuration is optimized for GitHub Codespaces and only works on amd64.
+
+---
+
+## Option B: Fully local (no container)
+
+If you prefer not to use Docker or Dev Containers, you can install all dependencies directly on your machine.
+
+### Prerequisites
 
 Make sure you have the following installed:
 
@@ -95,9 +135,11 @@ Select **Yes** and press Enter.
 
 ## After the workshop
 
-> ⚠️ **Important:** The workshop API key will stop working after the event. If you don't restore your configuration, Claude Code will fail to connect. Run the cleanup script below to get back to normal.
+> ⚠️ **Important:** The workshop API key will stop working after the event.
 
-To restore your original Claude Code configuration:
+**Option A (Dev Container):** No cleanup needed — just close VS Code and delete the container. Your host machine's Claude Code settings are untouched.
+
+**Option B (Fully local):** Run the cleanup script to restore your original Claude Code configuration:
 
 ```bash
 bash unsetup.sh
