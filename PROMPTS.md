@@ -26,7 +26,7 @@ npm run server
 ```
 
 This command will also keep running as this is our Grafana server that we will be using. 
-- Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" 🌐︎ icon. This should take you to your grafana instance. 
+- Go to the "Ports" tab, find the one labeled "Grafana" (port 3000) and click the globe icon to open it in your browser.
 - Now go to "Explore" and verify that you can see "bcapi" in the data source selector - it should display "No data" which is correct.
 
 Great we have a new empty data source plugin scaffolded and it is working.
@@ -79,7 +79,7 @@ Once done, we want to verify that the plugin is working and can fetch data from 
 npm run server
 ```
 
-- Go to "Ports" tab, find the one which says "Grafana (3000)" and click the "Globe" icon. This should take you to your Grafana instance.
+- Go to the "Ports" tab, find the one labeled "Grafana" (port 3000) and click the globe icon to open it in your browser.
 - Open Explore and hit "Run query" — you should see data being fetched from the API.
 
 Awesome! You now have an actually working data source.
@@ -90,7 +90,7 @@ Awesome! You now have an actually working data source.
 > ```
 
 ### Storing Knowledge
-We want to make sure that next time claude runs it actually remembers the most important information about your data source. In **claude** run this prompt
+We want to make sure that next time Claude runs it actually remembers the most important information about your data source. In **claude** (still inside the plugin folder) run this prompt to update the plugin's own `CLAUDE.md`:
 
 ```
 Store the essential information about the created datasource in your memories, including the plugin ID, API endpoints, authentication method, and supported query types.
@@ -165,7 +165,7 @@ Make it so I can see the details of a station when I put my mouse over each elem
 Review the plan and accept it if you are happy with it. If not, reject it and tell Claude what to change — then accept the revised plan.
 
 Once done, verify the app is working:
-- Go to "Ports" tab, find "Grafana (3000)" and click the "Globe" icon to open your Grafana instance.
+- Go to the "Ports" tab, find the one labeled "Grafana" (port 3000) and click the globe icon to open your Grafana instance.
 - Navigate to the Bicing app page — you should see a list of stations with details appearing on hover.
 
 ### Adding Map View
@@ -203,12 +203,18 @@ Once this is done, prompt Claude to:
 
 ```
 Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
-Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL and "placeholder" as the anthropicKey.
+Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL.
+Use ${ANTHROPIC_API_KEY} as the anthropicKey in secureJsonData and pass ANTHROPIC_API_KEY through docker-compose environment.
 ```
 
 Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
 
 You can now keep prompting Claude to modify the app views — change the map behavior, tweak what happens when a station is clicked, or whatever you wish.
+
+> **Fell behind?** If you didn't manage to finish Milestone 3, ask Claude Code to switch to the `milestone3-completed` branch and discard your local changes:
+> ```
+> Switch to the milestone3-completed branch and discard my local changes
+> ```
 
 ---
 

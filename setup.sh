@@ -216,6 +216,15 @@ else
 fi
 
 
+# Write .env files for docker-compose so ANTHROPIC_API_KEY is available to containers
+# (Claude Code injects env vars from settings.json into its own process, but docker-compose
+# needs them in the shell or in a .env file)
+for plugin_dir in "$PROJECT_DIR"/aiworkshop-bcapi-*/; do
+  if [ -d "$plugin_dir" ]; then
+    echo "ANTHROPIC_API_KEY=$KEY" > "$plugin_dir/.env"
+  fi
+done
+
 echo ""
 echo "============================================"
 echo "  Setup complete!"

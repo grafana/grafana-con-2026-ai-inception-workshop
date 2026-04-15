@@ -4,8 +4,8 @@
 
 ## Getting Started
 
-1. Wait for the Codespace to finish loading (Claude Code is being installed).
-2. Run the setup script:
+1. Wait for the Codespace to finish loading.
+2. Run the setup script (this will install Claude Code and configure everything):
    ```
    bash setup.sh
    ```
@@ -15,6 +15,7 @@
 ## Workshop Resources
 
 - **[Prompts](PROMPTS.md)** - Step-by-step prompts and commands for each milestone
+- **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and how to fix them
 - [**Presentation Slides**](https://docs.google.com/presentation/d/1Af0BXvxNxtmIATizqiUjr2P-frlvAMu5WwB3xTp5eu0/)
 
 ## Additional Challenges

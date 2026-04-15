@@ -15,8 +15,8 @@ if [ -f "$BACKUP_FILE" ]; then
   mv "$BACKUP_FILE" "$SETTINGS_FILE"
   echo "Restored your original Claude Code settings from backup."
 elif [ -f "$SETTINGS_FILE" ]; then
-  # No backup — this was a fresh install. Remove the workshop env vars.
-  UPDATED=$(jq 'del(.env.ANTHROPIC_BASE_URL, .env.ANTHROPIC_API_KEY)' "$SETTINGS_FILE")
+  # No backup — this was a fresh install. Remove all workshop settings.
+  UPDATED=$(jq 'del(.env.ANTHROPIC_BASE_URL, .env.ANTHROPIC_API_KEY, .model, .permissions, .skipDangerousModePermissionPrompt)' "$SETTINGS_FILE")
 
   # If env block is now empty, remove it too
   UPDATED=$(echo "$UPDATED" | jq 'if .env == {} then del(.env) else . end')
