@@ -1,6 +1,5 @@
 {
   "name": "GrafanaCon 2026 - AI Workshop (Codespaces)",
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
   "hostRequirements": {
     "cpus": 8,
     "memory": "8gb",
