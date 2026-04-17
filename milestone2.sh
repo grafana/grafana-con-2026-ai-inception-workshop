@@ -104,6 +104,12 @@ datasources:
 EOF
 fi
 
+# Copy the ANTHROPIC_API_KEY env file from the datasource so docker-compose
+# in the app folder can resolve ${ANTHROPIC_API_KEY} at runtime (milestone 3).
+if [ -f "$PROJECT_DIR/$DS_DIR/.env" ] && [ ! -f "$PROJECT_DIR/$APP_DIR/.env" ]; then
+  cp "$PROJECT_DIR/$DS_DIR/.env" "$PROJECT_DIR/$APP_DIR/.env"
+fi
+
 echo ""
 echo "============================================"
 echo "  Milestone 2 setup complete!"
