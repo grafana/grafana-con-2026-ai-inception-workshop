@@ -16,6 +16,35 @@ Agent instructions (loaded automatically — no action needed):
 - `.config/AGENTS/instructions.md` — core Grafana plugin rules (uses the latest grafana.com docs, `secureJsonData` for secrets, don't modify `.config/`, etc.).
 - `.config/AGENTS/e2e-testing.md` — referenced explicitly in the E2E challenge below.
 
+## Landmark-Aware Station Chat
+
+Add a sidebar chat panel that lets users ask questions like "are there bike stations near the Sagrada Família?" or "where can I find e-bikes near Barceloneta beach?".
+
+The chat should use the `@grafana/llm` package with **tool calling** so the LLM can actively look up information rather than guessing:
+- A **geocoding tool** that resolves place names to coordinates using the [Nominatim API](https://nominatim.org/release-docs/latest/api/Search/) (free, no key required — `GET https://nominatim.openstreetmap.org/search?q=<place>&format=json`)
+- A **station lookup tool** that finds stations within a given radius of a lat/lon using the station data already loaded in the app
+
+The LLM decides when to call each tool and uses the results to give a grounded, accurate answer.
+
+Useful references:
+- [`@grafana/llm` package on npm](https://www.npmjs.com/package/@grafana/llm) — tool calling types and chat API
+- [Nominatim search docs](https://nominatim.org/release-docs/latest/api/Search/) — query by place name, returns lat/lon
+- [Nominatim reverse geocoding docs](https://nominatim.org/release-docs/latest/api/Reverse/) — query by lat/lon, returns address/neighborhood
+
+```
+Add a sidebar chat panel to the app. Users should be able to ask questions about bike
+stations near landmarks or places in Barcelona, for example "are there stations near
+Park Güell?" or "find e-bikes near the beach".
+
+Use the @grafana/llm package with tool calling. Give the LLM two tools:
+1. A geocoding tool that uses the Nominatim API to resolve a place name to coordinates
+2. A station search tool that finds the closest stations to given coordinates from the
+   already-loaded station data
+
+The LLM should call the tools as needed and use the results to answer the user's question.
+Use a non-streaming chat API.
+```
+
 ## E2E Testing with @grafana/plugin-e2e
 
 Your scaffolded plugins already come with `@grafana/plugin-e2e`, Playwright, and agent instructions in `.config/AGENTS/e2e-testing.md` that teach Claude how to write idiomatic e2e tests.
@@ -82,35 +111,6 @@ Make the map respect Grafana's theme so it looks great in both light and dark mo
 Make the map tiles switch style based on the current Grafana theme.
 Use a dark map style when Grafana is in dark mode and a light style when in light mode.
 The map should update automatically when the user switches themes.
-```
-
-## Landmark-Aware Station Chat
-
-Add a sidebar chat panel that lets users ask questions like "are there bike stations near the Sagrada Família?" or "where can I find e-bikes near Barceloneta beach?".
-
-The chat should use the `@grafana/llm` package with **tool calling** so the LLM can actively look up information rather than guessing:
-- A **geocoding tool** that resolves place names to coordinates using the [Nominatim API](https://nominatim.org/release-docs/latest/api/Search/) (free, no key required — `GET https://nominatim.openstreetmap.org/search?q=<place>&format=json`)
-- A **station lookup tool** that finds stations within a given radius of a lat/lon using the station data already loaded in the app
-
-The LLM decides when to call each tool and uses the results to give a grounded, accurate answer.
-
-Useful references:
-- [`@grafana/llm` package on npm](https://www.npmjs.com/package/@grafana/llm) — tool calling types and chat API
-- [Nominatim search docs](https://nominatim.org/release-docs/latest/api/Search/) — query by place name, returns lat/lon
-- [Nominatim reverse geocoding docs](https://nominatim.org/release-docs/latest/api/Reverse/) — query by lat/lon, returns address/neighborhood
-
-```
-Add a sidebar chat panel to the app. Users should be able to ask questions about bike
-stations near landmarks or places in Barcelona, for example "are there stations near
-Park Güell?" or "find e-bikes near the beach".
-
-Use the @grafana/llm package with tool calling. Give the LLM two tools:
-1. A geocoding tool that uses the Nominatim API to resolve a place name to coordinates
-2. A station search tool that finds the closest stations to given coordinates from the
-   already-loaded station data
-
-The LLM should call the tools as needed and use the results to answer the user's question.
-Use a non-streaming chat API.
 ```
 
 ## Natural Language Queries
