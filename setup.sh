@@ -183,7 +183,8 @@ else
      permissions: {
        defaultMode: "bypassPermissions"
      },
-     skipDangerousModePermissionPrompt: true
+     skipDangerousModePermissionPrompt: true,
+     useAutoModeDuringPlan: false
    }' > "$SETTINGS_FILE"
 
  # Write ~/.claude.json with onboarding completed and project trusted
