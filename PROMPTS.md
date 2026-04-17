@@ -202,9 +202,17 @@ Use a synchronous non-streaming api.
 Once this is done, prompt Claude to:
 
 ```
-Make sure the grafana-llm-app is automatically installed in my app project and provisioned with the Anthropic provider.
-Use https://cc-workshop-proxy.grafana.fun as the Anthropic URL.
-Use ${ANTHROPIC_API_KEY} as the anthropicKey in secureJsonData and pass ANTHROPIC_API_KEY through docker-compose environment.
+Make sure the grafana-llm-app is automatically installed and provisioned with the Anthropic provider in this app plugin.
+
+Concrete requirements:
+1. Add grafana-llm-app to GF_INSTALL_PLUGINS in docker-compose.yaml.
+2. Add ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY} under the grafana service's environment in docker-compose.yaml.
+3. Create provisioning/plugins/apps.yaml that provisions grafana-llm-app with:
+   - provider: anthropic
+   - anthropic.url: https://cc-workshop-proxy.grafana.fun
+   - secureJsonData.anthropicKey: "${ANTHROPIC_API_KEY}"
+4. Ensure a .env file exists in this plugin folder (aiworkshop-bcapi-app) containing ANTHROPIC_API_KEY=<value>. If ../aiworkshop-bcapi-datasource/.env already contains one, copy that value. Do NOT invent a key.
+5. Verify docker-compose.yaml and the provisioning file reference ${ANTHROPIC_API_KEY} (not a hardcoded value) so the key is read from the .env file at runtime.
 ```
 
 Now restart the Grafana server (Ctrl+C in the `npm run server` terminal, then run it again). Go to "Administration -> Plugins and data -> Plugins" and search for the LLM plugin — it should now be installed and pre-configured.
