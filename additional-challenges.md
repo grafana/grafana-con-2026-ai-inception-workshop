@@ -2,6 +2,20 @@
 
 > **Note:** Challenges that use `@grafana/llm` (Landmark-Aware Station Chat, Station Recommendations via LLM, Natural Language Queries) require **Milestone 3** to be completed first — the LLM plugin must be installed and provisioned. If you haven't done Milestone 3 yet, either complete it first or switch to the `milestone3-completed` branch.
 
+## Using the scaffolded skills
+
+Your scaffolded plugins ship with Claude Code skills and agent instructions that apply to every challenge below — not just E2E. Run Claude Code from **inside the plugin folder** to use them.
+
+Slash commands:
+
+- `/build-plugin` — builds the frontend (and backend via mage, if the plugin has one). Use this after a round of changes instead of trying to remember the right `npm` / `mage` invocation.
+- `/validate-plugin` — packages the plugin and runs the official Grafana plugin validator. Run this after finishing a challenge as a quick sanity check that you haven't broken anything.
+
+Agent instructions (loaded automatically — no action needed):
+
+- `.config/AGENTS/instructions.md` — core Grafana plugin rules (uses the latest grafana.com docs, `secureJsonData` for secrets, don't modify `.config/`, etc.).
+- `.config/AGENTS/e2e-testing.md` — referenced explicitly in the E2E challenge below.
+
 ## E2E Testing with @grafana/plugin-e2e
 
 Your scaffolded plugins already come with `@grafana/plugin-e2e`, Playwright, and agent instructions in `.config/AGENTS/e2e-testing.md` that teach Claude how to write idiomatic e2e tests.
