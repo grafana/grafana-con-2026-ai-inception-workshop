@@ -95,10 +95,10 @@ If VS Code shows *"Dev Container configuration is missing image information"* wh
 
 ## Dev Container: `setup.sh` runs in local mode
 
-If `setup.sh` prints "It looks like you're running on a local machine" inside a Dev Container, your container may not have the `REMOTE_CONTAINERS` environment variable set. Verify with:
+If `setup.sh` prints "It looks like you're running on a local machine" inside a Dev Container, your container may not have the `REMOTE_CONTAINERS_IPC` environment variable set. Verify with:
 
 ```bash
-echo $REMOTE_CONTAINERS
+echo $REMOTE_CONTAINERS_IPC
 ```
 
-It should print `true`. If it doesn't, make sure you're in the VS Code terminal inside the Dev Container, not your host terminal.
+It should print a socket path (e.g. `/tmp/vscode-remote-containers-ipc-*.sock`). If it's empty, make sure you're in the VS Code terminal inside the Dev Container, not your host terminal.
