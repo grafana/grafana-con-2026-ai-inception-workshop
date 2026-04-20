@@ -1,10 +1,5 @@
 {
   "name": "GrafanaCon 2026 - AI Workshop (Codespaces)",
-  "hostRequirements": {
-    "cpus": 8,
-    "memory": "4gb",
-    "storage": "16gb"
-  },
   "customizations": {
     "vscode": {
       "extensions": [
